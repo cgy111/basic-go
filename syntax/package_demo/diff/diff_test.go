@@ -1,7 +1,5 @@
-package diff_test
-
-import "basic-go/syntax/package_demo/diff"
+package diff
 
 func UseHello() {
-	diff.Hello()
+	Hello()
 }
