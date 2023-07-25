@@ -10,8 +10,10 @@ func main() {
 
 	if b != 0 {
 		println(a / b)
+		//取余
+		println(a % b)
 	}
-	
+
 	//println(a / 0)
 
 }
