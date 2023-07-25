@@ -1,4 +1,4 @@
-package basic_type
+package main
 
 func main() {
 	var a int = 456
@@ -24,5 +24,6 @@ func main() {
 	var d int32 = 12
 	println(a+d)
 	*/
+	String()
 
 }
