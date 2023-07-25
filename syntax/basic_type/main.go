@@ -16,4 +16,13 @@ func main() {
 
 	//println(a / 0)
 
+	var c float64 = 12.3
+	println(float64(a) + c)
+
+	/**
+	 *不兼容
+	var d int32 = 12
+	println(a+d)
+	*/
+
 }
