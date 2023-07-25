@@ -7,7 +7,11 @@ func main() {
 	println(a + b)
 	println(a - b)
 	println(a * b)
-	println(a / b)
-	println(a / 0)
+
+	if b != 0 {
+		println(a / b)
+	}
+	
+	//println(a / 0)
 
 }
