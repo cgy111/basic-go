@@ -25,5 +25,6 @@ func main() {
 	println(a+d)
 	*/
 	String()
+	Byte()
 
 }
