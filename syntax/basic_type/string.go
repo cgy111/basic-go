@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"unicode/utf8"
+)
 
 func String() {
 	//He said:"Hello Go!"
@@ -14,4 +17,8 @@ func String() {
 	println("Hello" + "go")
 	//println("hello"+string(123))
 	fmt.Printf("hello %d", 123)
+
+	println(len("abc"))
+	//println(len("你好！"))
+	println(utf8.RuneCountInString("你好"))
 }
