@@ -1,4 +1,6 @@
-package funcs
+package main
+
+import "strings"
 
 // Func1没有任何参数
 func Func1() {
@@ -44,5 +46,31 @@ func Func9() (name string, age int) {
 }
 func Func10() (name string, age int) {
 	//等价于 "",0
+	return
+}
+func Func11() (string, int) {
+	var name string
+	var age int
+	return name, age
+}
+
+/**
+//要么都有名字，要么都没有名字
+func Func12() (name string,int) {
+	//等价于 "",0
+	return
+}
+*/
+
+func Func13(abc string) (string, int) {
+	segs := strings.Split(abc, " ")
+	return segs[0], len(segs)
+}
+
+func Func14(abc string) (first string, length int) {
+	//从这里开始生效
+	segs := strings.Split(abc, " ")
+	first = segs[0]
+	length = len(segs)
 	return
 }
