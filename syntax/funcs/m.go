@@ -29,5 +29,6 @@ func main() {
 		println(getAge())
 		println(getAge())
 		println(getAge())*/
-	Defer()
+	//Defer()
+	DeferClosureV1()
 }
