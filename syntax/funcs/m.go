@@ -18,8 +18,15 @@ func main() {
 	//UseFunctional4()
 	//Functional8()
 
-	fn := Cloursre("cgy")
+	/*fn := Cloursre("cgy")
 	//fn其实已经从Closure里面返回了
 	//但是fn还要用到"cgy"
-	println(fn())
+	println(fn())*/
+
+	getAge := Cloursre3()
+	println(getAge())
+	println(getAge())
+	println(getAge())
+	println(getAge())
+	println(getAge())
 }
