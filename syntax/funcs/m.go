@@ -14,5 +14,5 @@ func main() {
 		println(name1)
 		println(name2)*/
 
-	Recursive()
+	Recursive(10)
 }
