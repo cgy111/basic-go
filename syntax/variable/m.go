@@ -1,4 +1,4 @@
-package main
+package variable
 
 var Global = "全局变量"
 var interna = "私有变量"
