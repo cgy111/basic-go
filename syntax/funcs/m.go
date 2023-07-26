@@ -14,5 +14,12 @@ func main() {
 		println(name1)
 		println(name2)*/
 
-	Recursive(10)
+	//Recursive(10)
+	//UseFunctional4()
+	//Functional8()
+
+	fn := Cloursre("cgy")
+	//fn其实已经从Closure里面返回了
+	//但是fn还要用到"cgy"
+	println(fn())
 }
