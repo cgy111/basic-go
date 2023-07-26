@@ -7,10 +7,10 @@ const (
 )
 
 const (
-	StatusA = iota
-	StatusB
-	StatusC
-	StatusD
+	Init = iota
+	Running
+	Paused
+	Stop
 
 	Status = 100
 )
@@ -18,6 +18,12 @@ const (
 const (
 	DayA = iota*12 + 13
 	DayB
+)
+
+const (
+	NumA = iota << 1
+	NumB
+	NumC
 )
 
 func main() {
