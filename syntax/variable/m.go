@@ -6,11 +6,19 @@ var interna = "私有变量"
 var (
 	First  string = "1"
 	second int    = 2
+
+	aa = "hello"
 )
 
 func main() {
 	var a int = 123
 	println(a)
+
+	var a1 int
+	println(a1)
+
+	var aa int = 123
+	println(aa)
 
 	var b = 234
 	println(b)
