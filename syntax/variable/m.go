@@ -23,4 +23,7 @@ func main() {
 		e int    = 123
 	)
 	println(d, e)
+
+	f := 123
+	println(f)
 }
