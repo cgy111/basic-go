@@ -23,10 +23,11 @@ func main() {
 	//但是fn还要用到"cgy"
 	println(fn())*/
 
-	getAge := Cloursre3()
-	println(getAge())
-	println(getAge())
-	println(getAge())
-	println(getAge())
-	println(getAge())
+	/*	getAge := Cloursre3()
+		println(getAge())
+		println(getAge())
+		println(getAge())
+		println(getAge())
+		println(getAge())*/
+	Defer()
 }
