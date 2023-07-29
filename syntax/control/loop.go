@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 func ForLoop() {
 	for i := 0; i < 10; i++ {
 		println(i)
@@ -59,4 +61,25 @@ func ForMap() {
 	for k := range m {
 		println(k, m[k])
 	}
+}
+
+type User struct {
+	name string
+}
+
+func LoopBug() {
+	users := []User{
+		{
+			name: "cgy",
+		},
+		{
+			name: "Cgy",
+		},
+	}
+	m := make(map[string]*User)
+	for _, u := range users {
+		fmt.Printf("%p\n", &u)
+		m[u.name] = &u
+	}
+	fmt.Printf("%v\n", m)
 }
