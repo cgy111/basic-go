@@ -3,5 +3,6 @@ package main
 func main() {
 	//ForArr()
 	//ForSlice()
-	ForMap()
+	//ForMap()
+	LoopBug()
 }
