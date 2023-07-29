@@ -1,4 +1,4 @@
-package control
+package main
 
 func IfOnly(age int) {
 	if age >= 18 {
