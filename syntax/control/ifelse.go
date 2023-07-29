@@ -25,3 +25,13 @@ func IfElseIf(age int) string {
 	}
 	return ""
 }
+
+func IfNewVariable(start int, end int) string {
+	if distance := end - start; distance > 100 {
+		return "太远了"
+	} else if distance > 60 {
+		return "有点远"
+	} else {
+		return "还挺好"
+	}
+}
