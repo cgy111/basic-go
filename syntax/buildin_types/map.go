@@ -3,9 +3,20 @@ package main
 func Map() {
 	m1 := map[string]int{
 		"key1": 123,
+		"key2": 789,
+		"key3": 101112,
 	}
 	m1["hello"] = 345
 
+	for k, v := range m1 {
+		println(k, v)
+	}
+
+	for k := range m1 {
+		println(k)
+	}
+
+	delete(m1, "hello")
 	//容量
 	m2 := make(map[string]int, 12)
 	m2["key2"] = 12
