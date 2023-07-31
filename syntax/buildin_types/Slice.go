@@ -22,3 +22,15 @@ func Slice() {
 	s4 = append(s4, 1)
 	fmt.Printf("s4:%v,len=%d,cap=%d", s4, len(s4), cap(s4))
 }
+
+func SubSlice() {
+	s1 := []int{2, 4, 6, 8, 10}
+	s2 := s1[1:3]
+	fmt.Printf("s2:%v,len=%d,cap=%d\n", s2, len(s2), cap(s2))
+
+	s3 := s1[2:]
+	fmt.Printf("s3:%v,len=%d,cap=%d\n", s3, len(s3), cap(s3))
+
+	s4 := s1[:3]
+	fmt.Printf("s4:%v,len=%d,cap=%d", s4, len(s4), cap(s4))
+}
