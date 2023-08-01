@@ -29,4 +29,6 @@ func Map() {
 
 	val = m1["Cgy"]
 	println("Cgy对应的值:", val)
+
+	delete(m1, "key1")
 }
