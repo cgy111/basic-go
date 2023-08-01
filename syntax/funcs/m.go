@@ -30,5 +30,6 @@ func main() {
 		println(getAge())
 		println(getAge())*/
 	//Defer()
-	DeferClosureV1()
+	//DeferClosureV1()
+	DeferClosureLoopV1()
 }
