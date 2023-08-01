@@ -32,3 +32,15 @@ func Map() {
 
 	delete(m1, "key1")
 }
+
+func UseKey() {
+	m := map[string]int{
+		"key1": 123,
+	}
+	keys := Keys(m)
+	println(keys)
+}
+
+func Keys(m map[string]int) []string {
+	return []string{"helllo"}
+}
