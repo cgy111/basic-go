@@ -32,4 +32,6 @@ func main() {
 	//Defer()
 	//DeferClosureV1()
 	DeferClosureLoopV1()
+	DeferClosureLoopV2()
+	DeferClosureLoopV3()
 }
