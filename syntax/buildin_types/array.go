@@ -18,6 +18,12 @@ func UseSumInt64() {
 	s1 := []int{1, 2, 3}
 	res := SumInt(s1)
 	println(res)
+
+	s2 := make([]int64, 0, len(s1))
+
+	for _, v := range s1 {
+		s2 = append(s2, int64((v)))
+	}
 }
 func SumInt(vals []int) int {
 	var res int
