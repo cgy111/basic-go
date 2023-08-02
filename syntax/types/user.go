@@ -47,15 +47,23 @@ func (u *User) ChangeAge(age int) {
 	u.Age = age
 }
 func ChangeAge(u *User, age int) {
-	
+
 }
 
 func ChangeUser() {
 	u1 := User{Name: "Tom", Age: 18}
 	fmt.Printf("u1 的地址%p\n", &u1)
+	//(&u1).ChangeAge(35)
 	u1.ChangeAge(35)
 	//这一步执行的时候，其实相当于复制了一个U1,改的是复制体
 	//所以u1原封不动
 	u1.ChangeName("Jerry")
 	fmt.Printf("%+v", u1)
+
+	up1 := &User{}
+	//(*up1).ChangeName("Jerry")
+	up1.ChangeName("Jerry")
+
+	up1.ChangeAge(35)
+	fmt.Printf("%+v", up1)
 }

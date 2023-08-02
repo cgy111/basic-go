@@ -18,4 +18,6 @@ func (l *LinkedList) AddV1(idx int, val any) {
 }
 
 type node struct {
+	prev *node
+	next *node
 }
