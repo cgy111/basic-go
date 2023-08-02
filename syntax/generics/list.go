@@ -24,5 +24,8 @@ type node[T any] struct {
 }
 
 func main() {
-	UseList()
+	//UseList()
+
+	println(Sum[int](1, 2, 3))
+	println(Sum[Integer](1, 2, 3))
 }
