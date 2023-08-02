@@ -15,6 +15,14 @@ func UseList() {
 
 }
 
+type LinkedList[T any] struct {
+	head *node[T]
+}
+
+type node[T any] struct {
+	val T
+}
+
 func main() {
 	UseList()
 }
