@@ -28,7 +28,8 @@ func (l *LinkedList) toSlise() ([]any, error) {
 	panic("implement me")
 }
 
-/*func (l LinkedList) Add(idx int, val any) {
+/*
+func (l LinkedList) Add(idx int, val any) {
 
 }
 
