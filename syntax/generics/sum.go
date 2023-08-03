@@ -1,5 +1,9 @@
 package main
 
+import (
+	"encoding/json"
+)
+
 func Sum[T Num](vals ...T) T {
 	var res T
 	for _, val := range vals {
@@ -13,3 +17,7 @@ type Num interface {
 }
 
 type Integer int
+
+func ReleaseResource[R json.Marshaler](r R) {
+	r.MarshalJSON()
+}
