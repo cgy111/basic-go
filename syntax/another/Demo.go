@@ -1,7 +1,6 @@
 package main
 
-import "fmt"
-
+/*
 func main() {
 	arr := [4]int{10, 20, 30, 40}
 	fmt.Println(arr, len(arr), cap(arr))
@@ -13,4 +12,4 @@ func main() {
 	fmt.Println(s3, len(s3), cap(s3))
 	s1[0] = 1000
 	fmt.Println(s1, len(s1), cap(s1))
-}
+}*/
