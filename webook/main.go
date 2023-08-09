@@ -39,6 +39,7 @@ func main() {
 	//server := web.RegisterRoutes()
 	server := gin.Default()
 	u := &web.UserHandler{}
+	//u.RegisterRoutesV1(server.Group("/users"))
 	u.RegisterRoutes(server)
 	server.Run(":8080")
 }
