@@ -1,7 +1,9 @@
 package web
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 // UserHandler 定义所有和用户有关的路由
@@ -46,7 +48,20 @@ type ArticleHandler struct {
 }
 
 func (u *UserHandler) SignUp(ctx *gin.Context) {
-
+	type SignUpReq struct {
+		Email           string `json:"email"`
+		ConfirmPassword string `json:"confirmPassword"`
+		Password        string `json:"password"`
+	}
+	//Bind方法会根据Content-Type来解析你的数据到req里面
+	//解析错了，就会直接写回一个400的错误
+	var req SignUpReq
+	if err := ctx.Bind(&req); err != nil {
+		return
+	}
+	ctx.String(http.StatusOK, "注册成功")
+	fmt.Printf("%v", req)
+	//这边就是数据库操作
 }
 
 func (u *UserHandler) Login(ctx *gin.Context) {
