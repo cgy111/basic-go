@@ -1,6 +1,8 @@
 package web
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 // UserHandler 定义所有和用户有关的路由
 type UserHandler struct {
@@ -20,6 +22,7 @@ func (u *UserHandler) RegisterRoutes(server *gin.Engine) {
 	ug.GET("/profile", u.Profile)
 	ug.POST("/signup", u.SignUp)
 	ug.POST("/login", u.Login)
+	//ug.POST("/login/page", u.Login)
 	ug.POST("/edit", u.Edit)
 }
 
@@ -49,6 +52,10 @@ func (u *UserHandler) SignUp(ctx *gin.Context) {
 func (u *UserHandler) Login(ctx *gin.Context) {
 
 }
+
+/*func (u *UserHandler) LoginPage(ctx *gin.Context) {
+	ctx.HTML(http.StatusOK, "login.html", nil)
+}*/
 
 func (u *UserHandler) Edit(ctx *gin.Context) {
 
