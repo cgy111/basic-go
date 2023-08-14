@@ -64,6 +64,7 @@ func (u *UserHandler) SignUp(ctx *gin.Context) {
 		emailRegexPattern    = "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$"
 		passwordRegexPattern = `^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@!%*#?&]{8,}$`
 	)
+	//邮箱校验
 	ok, err := regexp.Match(emailRegexPattern, []byte(req.Email))
 	if err != nil {
 		ctx.String(http.StatusOK, "系统错误")
@@ -73,6 +74,21 @@ func (u *UserHandler) SignUp(ctx *gin.Context) {
 		ctx.String(http.StatusOK, "你的邮箱格式不对")
 		return
 	}
+
+	//密码校验
+	if req.ConfirmPassword != req.Password {
+		ctx.String(http.StatusOK, "两次输入的密码不一致")
+	}
+	ok, err = regexp.Match(passwordRegexPattern, []byte(req.Password))
+	if err != nil {
+		//记录日志
+		ctx.String(http.StatusOK, "系统错误")
+	}
+	if !ok {
+		ctx.String(http.StatusOK, "密码必须大于8位，包含数字、特殊字符")
+		return
+	}
+
 	ctx.String(http.StatusOK, "注册成功")
 	fmt.Printf("%v", req)
 	//这边就是数据库操作
