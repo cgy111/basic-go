@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"regexp"
 )
 
 // UserHandler 定义所有和用户有关的路由
@@ -57,6 +58,19 @@ func (u *UserHandler) SignUp(ctx *gin.Context) {
 	//解析错了，就会直接写回一个400的错误
 	var req SignUpReq
 	if err := ctx.Bind(&req); err != nil {
+		return
+	}
+	const (
+		emailRegexPattern    = "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$"
+		passwordRegexPattern = `^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@!%*#?&]{8,}$`
+	)
+	ok, err := regexp.Match(emailRegexPattern, []byte(req.Email))
+	if err != nil {
+		ctx.String(http.StatusOK, "系统错误")
+		return
+	}
+	if !ok {
+		ctx.String(http.StatusOK, "你的邮箱格式不对")
 		return
 	}
 	ctx.String(http.StatusOK, "注册成功")

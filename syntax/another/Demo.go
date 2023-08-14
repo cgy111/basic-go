@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 /*
 func main() {
 	arr := [4]int{10, 20, 30, 40}
@@ -13,3 +15,14 @@ func main() {
 	s1[0] = 1000
 	fmt.Println(s1, len(s1), cap(s1))
 }*/
+
+func main() {
+
+	if true {
+		defer fmt.Printf("1")
+	} else {
+		defer fmt.Printf("2")
+	}
+	fmt.Printf("3")
+
+}
