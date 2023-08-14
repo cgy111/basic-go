@@ -41,5 +41,5 @@ func main() {
 	u := &web.UserHandler{}
 	//u.RegisterRoutesV1(server.Group("/users"))
 	u.RegisterRoutes(server)
-	server.Run(":8080")
+	server.Run(":8081")
 }

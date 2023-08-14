@@ -2,13 +2,28 @@ package web
 
 import (
 	"fmt"
+	regexp "github.com/dlclark/regexp2"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"regexp"
 )
 
 // UserHandler 定义所有和用户有关的路由
 type UserHandler struct {
+	emailExp    *regexp.Regexp
+	passwordExp *regexp.Regexp
+}
+
+func NewUserHandler() *UserHandler {
+	const (
+		emailRegexPattern    = "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$"
+		passwordRegexPattern = `^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@!%*#?&]{8,}$`
+	)
+	emailExp := regexp.MustCompile(emailRegexPattern, regexp.None)
+	passwordExp := regexp.MustCompile(passwordRegexPattern, regexp.None)
+	return &UserHandler{
+		emailExp:    emailExp,
+		passwordExp: passwordExp,
+	}
 }
 
 func (u *UserHandler) RegisterRoutes(server *gin.Engine) {
@@ -60,12 +75,9 @@ func (u *UserHandler) SignUp(ctx *gin.Context) {
 	if err := ctx.Bind(&req); err != nil {
 		return
 	}
-	const (
-		emailRegexPattern    = "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$"
-		passwordRegexPattern = `^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@!%*#?&]{8,}$`
-	)
+
 	//邮箱校验
-	ok, err := regexp.Match(emailRegexPattern, []byte(req.Email))
+	ok, err := u.emailExp.MatchString(req.Email)
 	if err != nil {
 		ctx.String(http.StatusOK, "系统错误")
 		return
@@ -79,7 +91,8 @@ func (u *UserHandler) SignUp(ctx *gin.Context) {
 	if req.ConfirmPassword != req.Password {
 		ctx.String(http.StatusOK, "两次输入的密码不一致")
 	}
-	ok, err = regexp.Match(passwordRegexPattern, []byte(req.Password))
+
+	ok, err = u.passwordExp.MatchString(req.Password)
 	if err != nil {
 		//记录日志
 		ctx.String(http.StatusOK, "系统错误")
