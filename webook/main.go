@@ -2,43 +2,46 @@ package main
 
 import (
 	"basic-go/webook/intternal/web"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"strings"
+	"time"
 )
 
 func main() {
-	//server := gin.Default()
-	//
-	//u := &web.UserHandler{}
-	//
-	//server.POST("/users/signup", u.SignUp)
-	//
-	///*//REST风格
-	//server.PUT("/user", func(context *gin.Context) {
-	//
-	//})*/
-	//
-	//server.POST("/users/login", u.Login)
-	//
-	///*//Rest风格
-	//server.POST("/users/:id", func(context *gin.Context) {
-	//
-	//})*/
-	//
-	////非Rest风格
-	//server.POST("/users/edit", u.Edit)
-	//
-	//server.GET("users/profile", u.Profile)
-	//
-	///*//REST风格
-	//server.GET("users/:id", func(context *gin.Context) {
-	//
-	//})*/
-	//
-	//server.Run(":8080")
 
-	//server := web.RegisterRoutes()
 	server := gin.Default()
-	u := &web.UserHandler{}
+
+	server.Use(func(ctx *gin.Context) {
+		println("这是第一个middleware")
+
+	})
+
+	server.Use(func(ctx *gin.Context) {
+		println("这是第二个middleware")
+	})
+
+	server.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"http://localhost:3000"},
+		//AllowMethods: []string{"PUT", "PATCH"},
+		AllowHeaders: []string{"content-type", "authorization"},
+		//ExposeHeaders:    []string{"Content-Length"},
+		//是否允许带cooike
+		AllowCredentials: true,
+		AllowOriginFunc: func(origin string) bool {
+			//return origin == "https://localhost:8081"
+			//if strings.Contains(origin, "localhost") {
+			if strings.HasPrefix(origin, "http://localhost") {
+				//	开发环境
+				return true
+			}
+			return strings.Contains(origin, ":8081")
+		},
+		MaxAge: 12 * time.Hour,
+	}))
+
+	//u := &web.UserHandler{}
+	u := web.NewUserHandler()
 	//u.RegisterRoutesV1(server.Group("/users"))
 	u.RegisterRoutes(server)
 	server.Run(":8081")
