@@ -17,6 +17,8 @@ func main() {
 		panic("failed to connect database")
 	}
 
+	//db.Debug()
+
 	// 迁移 schema
 	db.AutoMigrate(&Product{})
 
