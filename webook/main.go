@@ -9,40 +9,26 @@ import (
 )
 
 func main() {
-
 	server := gin.Default()
-
-	server.Use(func(ctx *gin.Context) {
-		println("这是第一个middleware")
-
-	})
-
-	server.Use(func(ctx *gin.Context) {
-		println("这是第二个middleware")
-	})
-
 	server.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"http://localhost:3000"},
-		//AllowMethods: []string{"PUT", "PATCH"},
-		AllowHeaders: []string{"content-type", "authorization"},
-		//ExposeHeaders:    []string{"Content-Length"},
-		//是否允许带cooike
+		//AllowOrigins: []string{"http://localhost:3000"},
+		//AllowMethods: []string{"POST", "GET"},
+		AllowHeaders: []string{"Content-Type", "Authorization"},
+		//是否允许你带cookie之类的东西
 		AllowCredentials: true,
 		AllowOriginFunc: func(origin string) bool {
-			//return origin == "https://localhost:8081"
-			//if strings.Contains(origin, "localhost") {
 			if strings.HasPrefix(origin, "http://localhost") {
-				//	开发环境
+				//开发环境
 				return true
 			}
-			return strings.Contains(origin, ":8081")
+			return strings.Contains(origin, "qiniu.io")
 		},
 		MaxAge: 12 * time.Hour,
 	}))
 
-	//u := &web.UserHandler{}
 	u := web.NewUserHandler()
 	//u.RegisterRoutesV1(server.Group("/users"))
 	u.RegisterRoutes(server)
-	server.Run(":8081")
+	server.Run(":8080")
+
 }
