@@ -1,1 +1,1 @@
-create database wekbook;
+create database webook;
