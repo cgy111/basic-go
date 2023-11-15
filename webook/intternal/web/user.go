@@ -86,7 +86,7 @@ func (u *UserHandler) Signup(ctx *gin.Context) {
 		return
 	}
 
-	err := u.svc.SignUp(ctx, domain.User{
+	err = u.svc.SignUp(ctx, domain.User{
 		Email:    req.Email,
 		Password: req.Password,
 	})

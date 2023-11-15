@@ -14,10 +14,19 @@ import (
 )
 
 func main() {
-	db, err := gorm.Open(mysql.Open("root:root@tcp(127.0.0.1:13316)/webook?charset=utf8mb4&parseTime=True&loc=Local"))
+	db, err := gorm.Open(mysql.Open("root:root@tcp(localhost:13316)/webook?charset=utf8mb4&parseTime=True&loc=Local"))
+	if err != nil {
+		//只在初始化的时候panic
+		//panic相当于整个goroutine结束
+		//一旦初始化过程出错，应用就不要启动了
+		panic(err)
+	}
+
+	err = dao.InitTable(db)
 	if err != nil {
 		panic(err)
 	}
+
 	ud := dao.NewUserDAO(db)
 	repo := repository.NewUserRepository(ud)
 	svc := service.NewUserService(repo)
