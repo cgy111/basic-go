@@ -1,9 +1,10 @@
 package service
 
 import (
-	"basic-go/webook/intternal/domain"
-	"basic-go/webook/intternal/repository"
+	"basic-go/webook/internal/domain"
+	"basic-go/webook/internal/repository"
 	"context"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService struct {
@@ -18,6 +19,11 @@ func NewUserService(repo *repository.UserRepository) *UserService {
 
 func (svc *UserService) SignUp(ctx context.Context, u domain.User) error {
 	//考虑加密放在哪里
+	hash, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	u.Password = string(hash)
 	//然后存起来
 	return svc.repo.Create(ctx, u)
 }

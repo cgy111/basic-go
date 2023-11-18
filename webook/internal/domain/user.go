@@ -12,3 +12,11 @@ type User struct {
 
 //type Address struct {
 //}
+
+//func (u User) Encrypt() {
+//
+//}
+//
+//func (u User) ComparParssword(input string)  {
+//
+//}

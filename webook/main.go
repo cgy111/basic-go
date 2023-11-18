@@ -1,10 +1,10 @@
 package main
 
 import (
-	"basic-go/webook/intternal/repository"
-	"basic-go/webook/intternal/repository/dao"
-	"basic-go/webook/intternal/service"
-	"basic-go/webook/intternal/web"
+	"basic-go/webook/internal/repository"
+	"basic-go/webook/internal/repository/dao"
+	"basic-go/webook/internal/service"
+	"basic-go/webook/internal/web"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
