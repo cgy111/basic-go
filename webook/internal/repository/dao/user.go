@@ -10,6 +10,7 @@ import (
 
 var (
 	ErrUserDuplocateEmail = errors.New("邮箱冲突")
+	ErrUserNotFound       = gorm.ErrRecordNotFound
 )
 
 type UserDao struct {

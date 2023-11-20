@@ -6,7 +6,10 @@ import (
 	"context"
 )
 
-var ErrUserDuplicateEmail = dao.ErrUserDuplocateEmail
+var (
+	ErrUserDuplicateEmail = dao.ErrUserDuplocateEmail
+	ErrUserNotFound       = dao.ErrUserNotFound
+)
 
 //var ErrUserDuplicateEmailV1 = fmt.Errorf("%w 邮箱冲突",dao.ErrUserDuplocateEmail)
 

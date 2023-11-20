@@ -24,6 +24,9 @@ func NewUserService(repo *repository.UserRepository) *UserService {
 func (svc *UserService) Login(ctx context.Context, email, password string) error {
 	//	先找用户
 	u, err := svc.repo.FindByemail(ctx, email)
+	if err == repository.ErrUserNotFound {
+		return ErrInvalidUserOrPassword
+	}
 	if err != nil {
 		return err
 	}
