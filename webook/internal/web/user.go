@@ -107,7 +107,18 @@ func (u *UserHandler) Signup(ctx *gin.Context) {
 }
 
 func (u *UserHandler) Login(ctx *gin.Context) {
+	type LoginReq struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
 
+	var req LoginReq
+
+	if err := ctx.Bind(&req); err != nil {
+		return
+	}
+
+	err := u.svc.Login(ctx, req.Email, req.Password)
 }
 
 func (u *UserHandler) Edit(ctx *gin.Context) {
