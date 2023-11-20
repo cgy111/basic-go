@@ -6,6 +6,10 @@ import (
 	"context"
 )
 
+var ErrUserDuplicateEmail = dao.ErrUserDuplocateEmail
+
+//var ErrUserDuplicateEmailV1 = fmt.Errorf("%w 邮箱冲突",dao.ErrUserDuplocateEmail)
+
 type UserRepository struct {
 	dao *dao.UserDao
 }
