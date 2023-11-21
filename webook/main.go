@@ -6,6 +6,8 @@ import (
 	"basic-go/webook/internal/service"
 	"basic-go/webook/internal/web"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -25,6 +27,7 @@ func main() {
 
 func initWebServer() *gin.Engine {
 	server := gin.Default()
+	//跨域
 	server.Use(cors.New(cors.Config{
 		//AllowOrigins: []string{"http://localhost:3000"},
 		//AllowMethods: []string{"POST", "GET"},
@@ -40,6 +43,9 @@ func initWebServer() *gin.Engine {
 		},
 		MaxAge: 12 * time.Hour,
 	}))
+	//session
+	store := cookie.NewStore([]byte("secret"))
+	server.Use(sessions.Sessions("mysession", store))
 	return server
 }
 
