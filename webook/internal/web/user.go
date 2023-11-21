@@ -135,6 +135,7 @@ func (u *UserHandler) Login(ctx *gin.Context) {
 	//我可以随便设置值了
 	//你要放在session里面的值
 	sess.Set("userId", user.Id)
+	sess.Save()
 	ctx.String(http.StatusOK, "登录成功")
 	return
 }
