@@ -5,10 +5,13 @@ import "time"
 // User 领域对象，是DDD中的entity
 // BO(business object)
 type User struct {
-	Id       int64
-	Email    string
-	Password string
-	Ctime    time.Time
+	Id          int64
+	Email       string
+	Password    string
+	Name        string
+	Birthday    string
+	Description string
+	Ctime       time.Time
 }
 
 //type Address struct {

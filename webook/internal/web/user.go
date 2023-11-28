@@ -11,23 +11,34 @@ import (
 
 // 定义和用户有关的路由
 type UserHandler struct {
-	svc         *service.UserService
-	emailExp    *regexp.Regexp
-	passwordExp *regexp.Regexp
+	svc            *service.UserService
+	emailExp       *regexp.Regexp
+	passwordExp    *regexp.Regexp
+	nameExp        *regexp.Regexp
+	birthdayExp    *regexp.Regexp
+	descriptionExp *regexp.Regexp
 }
 
 func NewUserHandler(svc *service.UserService) *UserHandler {
 	const (
-		emailRegexPattern    = "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$"
-		passwordRegexPattern = `^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$`
+		emailRegexPattern       = "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$"
+		passwordRegexPattern    = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,}$"
+		nameRegexPattern        = "^.{3,16}$\n"
+		birthdayRegexPattern    = "^\\d{4}-\\d{2}-\\d{2}$"
+		descriptionRegexPattern = "^.{1,500}$\n"
 	)
 	emailExp := regexp.MustCompile(emailRegexPattern, regexp.None)
 	passwordExp := regexp.MustCompile(passwordRegexPattern, regexp.None)
-
+	nameEpx := regexp.MustCompile(nameRegexPattern, regexp.None)
+	birthdayExp := regexp.MustCompile(birthdayRegexPattern, regexp.None)
+	userProfilEpx := regexp.MustCompile(descriptionRegexPattern, regexp.None)
 	return &UserHandler{
-		svc:         svc,
-		emailExp:    emailExp,
-		passwordExp: passwordExp,
+		svc:            svc,
+		emailExp:       emailExp,
+		passwordExp:    passwordExp,
+		nameExp:        nameEpx,
+		birthdayExp:    birthdayExp,
+		descriptionExp: userProfilEpx,
 	}
 }
 
@@ -141,6 +152,50 @@ func (u *UserHandler) Login(ctx *gin.Context) {
 }
 
 func (u *UserHandler) Edit(ctx *gin.Context) {
+	type EditReq struct {
+		Name        string `json:"name"`
+		Birthday    string `json:"birthday"`
+		Description string `json:"description"`
+	}
+	var req EditReq
+
+	if err := ctx.Bind(&req); err != nil {
+		return
+	}
+
+	//验证昵称
+	ok, err := u.nameExp.MatchString(req.Name)
+	if err != nil {
+		ctx.String(http.StatusOK, "系统错误")
+		return
+	}
+	if !ok {
+		ctx.String(http.StatusOK, "昵称的长度在3到16个字符之间")
+		return
+	}
+
+	//验证生日格式
+	ok, err = u.birthdayExp.MatchString(req.Birthday)
+	if err != nil {
+		ctx.String(http.StatusOK, "系统错误")
+		return
+	}
+
+	if !ok {
+		ctx.String(http.StatusOK, "请输入如\"1992-01-01\"这种格式的生日日期")
+		return
+	}
+
+	ok, err = u.descriptionExp.MatchString(req.Description)
+	if err != nil {
+		ctx.String(http.StatusOK, "系统错误")
+		return
+	}
+
+	if !ok {
+		ctx.String(http.StatusOK, "个人简介的长度在1到500个字符之间")
+		return
+	}
 
 }
 

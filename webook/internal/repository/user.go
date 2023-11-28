@@ -4,6 +4,7 @@ import (
 	"basic-go/webook/internal/domain"
 	"basic-go/webook/internal/repository/dao"
 	"context"
+	"time"
 )
 
 var (
@@ -42,6 +43,17 @@ func (r *UserRepository) Create(ctx context.Context, u domain.User) error {
 	})
 
 	//	操作缓存的位置
+}
+
+func (r *UserRepository) Update(ctx context.Context, u domain.User) error {
+	return r.dao.Update(ctx, dao.User{
+		Id:          u.Id,
+		Name:        u.Name,
+		Birthday:    u.Birthday,
+		Description: u.Description,
+		Utime:       time.Now().UnixMilli(),
+	})
+
 }
 
 func (r *UserRepository) FindById(int64) {

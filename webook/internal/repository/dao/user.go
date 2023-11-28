@@ -47,14 +47,21 @@ func (dao *UserDao) Insert(ctx context.Context, u User) error {
 	return err
 }
 
+func (dao *UserDao) Update(ctx context.Context, u User) error {
+	err := dao.db.WithContext(ctx).Updates(&u).Error
+	return err
+}
+
 // User直接对应数据库表结构
 // 有的叫entity，model,PO(persistent object)
 type User struct {
 	Id int64 `gorm:"primaryKey,autoIncrement"`
 	//全部用户唯一
-	Email    string `gorm:"unique"`
-	Password string
-
+	Email       string `gorm:"unique"`
+	Password    string
+	Name        string
+	Birthday    string
+	Description string
 	//创建时间，毫秒数
 	Ctime int64
 	//更新时间，毫秒数
