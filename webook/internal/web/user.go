@@ -153,6 +153,7 @@ func (u *UserHandler) Login(ctx *gin.Context) {
 
 func (u *UserHandler) Edit(ctx *gin.Context) {
 	type EditReq struct {
+		Id          int64  `json:"id"`
 		Name        string `json:"name"`
 		Birthday    string `json:"birthday"`
 		Description string `json:"description"`
@@ -196,7 +197,17 @@ func (u *UserHandler) Edit(ctx *gin.Context) {
 		ctx.String(http.StatusOK, "个人简介的长度在1到500个字符之间")
 		return
 	}
-
+	err = u.svc.Edit(ctx, domain.User{
+		Id:          req.Id,
+		Name:        req.Name,
+		Birthday:    req.Birthday,
+		Description: req.Description,
+	})
+	if err != nil {
+		ctx.String(http.StatusOK, "系统异常")
+		return
+	}
+	ctx.String(http.StatusOK, "修改成功")
 }
 
 func (u *UserHandler) Profile(ctx *gin.Context) {
