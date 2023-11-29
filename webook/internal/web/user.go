@@ -231,5 +231,21 @@ func (u *UserHandler) Profile(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "查询失败"})
 		return
 	}
-	ctx.JSON(http.StatusOK, mes)
+
+	type UserResponse struct {
+		Id          int64  `json:"id"`
+		Email       string `json:"email"`
+		Name        string `json:"name"`
+		Birthday    string `json:"birthday"`
+		Description string `json:"description"`
+	}
+
+	mess := UserResponse{
+		Id:          mes.Id,
+		Email:       mes.Email,
+		Name:        mes.Name,
+		Birthday:    mes.Birthday,
+		Description: mes.Description,
+	}
+	ctx.JSON(http.StatusOK, mess)
 }

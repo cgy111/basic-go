@@ -70,8 +70,8 @@ func (r *UserRepository) Update(ctx context.Context, u domain.User) error {
 
 }
 
-func (r *UserRepository) FindById(int64) {
+/*func (r *UserRepository) FindById(int64) {
 	//先从cache中找
 	//再从dao中找
 	//找到了回写cache
-}
+}*/
