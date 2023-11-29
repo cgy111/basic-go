@@ -7,6 +7,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 // 定义和用户有关的路由
@@ -212,5 +213,23 @@ func (u *UserHandler) Edit(ctx *gin.Context) {
 }
 
 func (u *UserHandler) Profile(ctx *gin.Context) {
-	ctx.String(http.StatusOK, "这是你的profile")
+	//ctx.String(http.StatusOK, "这是你的profile")
+	userIdStr := ctx.Query("id")
+
+	if userIdStr == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Id不能为空"})
+		return
+	}
+
+	userId, err := strconv.Atoi(userIdStr)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Id不正确"})
+		return
+	}
+	mes, err := u.svc.Profile(ctx, userId)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "查询失败"})
+		return
+	}
+	ctx.JSON(http.StatusOK, mes)
 }
