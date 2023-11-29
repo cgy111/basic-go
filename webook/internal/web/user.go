@@ -23,9 +23,9 @@ func NewUserHandler(svc *service.UserService) *UserHandler {
 	const (
 		emailRegexPattern       = "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$"
 		passwordRegexPattern    = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,}$"
-		nameRegexPattern        = "^.{3,16}$\n"
+		nameRegexPattern        = "^.{3,16}$"
 		birthdayRegexPattern    = "^\\d{4}-\\d{2}-\\d{2}$"
-		descriptionRegexPattern = "^.{1,500}$\n"
+		descriptionRegexPattern = "^.{1,500}$"
 	)
 	emailExp := regexp.MustCompile(emailRegexPattern, regexp.None)
 	passwordExp := regexp.MustCompile(passwordRegexPattern, regexp.None)
@@ -207,7 +207,8 @@ func (u *UserHandler) Edit(ctx *gin.Context) {
 		ctx.String(http.StatusOK, "系统异常")
 		return
 	}
-	ctx.String(http.StatusOK, "修改成功")
+	//ctx.String(http.StatusOK, "修改成功")
+	ctx.JSON(http.StatusOK, gin.H{"message": "用户信息修改成功"})
 }
 
 func (u *UserHandler) Profile(ctx *gin.Context) {
