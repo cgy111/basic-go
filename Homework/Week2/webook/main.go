@@ -1,11 +1,11 @@
 package main
 
 import (
-	"basic-go/webook/internal/repository"
-	"basic-go/webook/internal/repository/dao"
-	"basic-go/webook/internal/service"
-	"basic-go/webook/internal/web"
-	"basic-go/webook/internal/web/middleware"
+	"basic-go/Homework/Week2/webook/internal/repository"
+	"basic-go/Homework/Week2/webook/internal/repository/dao"
+	"basic-go/Homework/Week2/webook/internal/service"
+	"basic-go/Homework/Week2/webook/internal/web"
+	"basic-go/Homework/Week2/webook/internal/web/middleware"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"

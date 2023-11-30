@@ -1,8 +1,8 @@
 package web
 
 import (
-	"basic-go/webook/internal/domain"
-	"basic-go/webook/internal/service"
+	"basic-go/Homework/Week2/webook/internal/domain"
+	"basic-go/Homework/Week2/webook/internal/service"
 	regexp "github.com/dlclark/regexp2"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"

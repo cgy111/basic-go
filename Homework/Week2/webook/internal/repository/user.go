@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"basic-go/webook/internal/domain"
-	"basic-go/webook/internal/repository/dao"
+	"basic-go/Homework/Week2/webook/internal/domain"
+	"basic-go/Homework/Week2/webook/internal/repository/dao"
 	"context"
 	"time"
 )

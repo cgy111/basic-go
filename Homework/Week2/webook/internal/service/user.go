@@ -1,8 +1,8 @@
 package service
 
 import (
-	"basic-go/webook/internal/domain"
-	"basic-go/webook/internal/repository"
+	"basic-go/Homework/Week2/webook/internal/domain"
+	"basic-go/Homework/Week2/webook/internal/repository"
 	"context"
 	"errors"
 	"golang.org/x/crypto/bcrypt"
