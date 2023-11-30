@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "@/axios/axios";
 const instance = axios.create({
     // 这边记得修改你对应的配置文件
     baseURL:  "http://localhost:8080",
