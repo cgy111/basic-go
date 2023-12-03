@@ -3,6 +3,7 @@ package web
 import (
 	"basic-go/webook/internal/domain"
 	"basic-go/webook/internal/service"
+	"fmt"
 	regexp "github.com/dlclark/regexp2"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -65,6 +66,8 @@ func (u *UserHandler) Signup(ctx *gin.Context) {
 		Password        string `json:"password"`
 	}
 	var req SignupReq
+	fmt.Println("2")
+
 	//Bind方法会根据Content-Type 来解析你的数据到req里面
 	//解析错了，就会直接写会一个400的错误
 	if err := ctx.Bind(&req); err != nil {
@@ -151,7 +154,7 @@ func (u *UserHandler) Login(ctx *gin.Context) {
 		//https协议
 		//Secure: true,
 		//HttpOnly: true,
-		MaxAge: 30,
+		MaxAge: 30 * 60,
 	})
 	sess.Save()
 	ctx.String(http.StatusOK, "登录成功")
