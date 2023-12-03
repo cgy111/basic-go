@@ -69,11 +69,11 @@ func (l *LoginMiddlewareBuilder) Build() gin.HandlerFunc {
 		}
 
 		//updateTime是有的
-		updateTimeVal, ok := updateTime.(time.Time)
-		if !ok {
-			ctx.AbortWithStatus(http.StatusInternalServerError)
-			return
-		}
+		updateTimeVal, _ := updateTime.(time.Time)
+		//if !ok {
+		//	ctx.AbortWithStatus(http.StatusInternalServerError)
+		//	return
+		//}
 
 		if now.Sub(updateTimeVal) > time.Second*10 {
 			sess.Set("update_time", now)
