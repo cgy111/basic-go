@@ -3,7 +3,9 @@ package middleware
 import (
 	"encoding/gob"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -12,14 +14,14 @@ type LoginJWTMiddlewareBuilder struct {
 	paths []string
 }
 
-func NewLoginJWTMiddlewareBuilder() *LoginMiddlewareBuilder {
-	return &LoginMiddlewareBuilder{}
+func NewLoginJWTMiddlewareBuilder() *LoginJWTMiddlewareBuilder {
+	return &LoginJWTMiddlewareBuilder{}
 }
 
-/*func (l *LoginJWTMiddlewareBuilder) IgnorePaths(path string) *LoginJWTMiddlewareBuilder {
+func (l *LoginJWTMiddlewareBuilder) IgnorePaths(path string) *LoginJWTMiddlewareBuilder {
 	l.paths = append(l.paths, path)
 	return l
-}*/
+}
 
 func (l *LoginJWTMiddlewareBuilder) Build() gin.HandlerFunc {
 	//用Go的方式编码解码
@@ -31,10 +33,34 @@ func (l *LoginJWTMiddlewareBuilder) Build() gin.HandlerFunc {
 			}
 		}
 		//现在用JWT来校验
-		token := ctx.GetHeader("Authorization")
-		if token == "" {
+		tokenHeader := ctx.GetHeader("Authorization")
+		if tokenHeader == "" {
 			//	没有登录
 			ctx.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
+		segs := strings.SplitN(tokenHeader, " ", 2)
+		if len(segs) != 2 {
+			//	没登录，有人瞎搞
+			ctx.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
+
+		tokenStr := segs[1]
+		token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
+			return []byte("8b8d2e454737a253e0b12365a1ab97e2"), nil
+		})
+
+		if err != nil {
+			//	没有登录
+			ctx.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
+		//err为nil，token不为nil
+		if token == nil || !token.Valid {
+			//	没有登录
+			ctx.AbortWithStatus(http.StatusUnauthorized)
+			return
 		}
 	}
 }
