@@ -54,7 +54,8 @@ func NewUserHandler(svc *service.UserService) *UserHandler {
 
 func (u *UserHandler) RegisterRoutes(server *gin.Engine) {
 	ug := server.Group("/users")
-	ug.GET("/profile", u.Profile)
+	//ug.GET("/profile", u.Profile)
+	ug.GET("/profile", u.ProfileJWT)
 	ug.POST("/signup", u.Signup)
 	//ug.POST("/login", u.Login)
 	ug.POST("/login", u.LoginJWT)
@@ -149,7 +150,11 @@ func (u *UserHandler) LoginJWT(ctx *gin.Context) {
 	//步骤2
 	//在这里用JWT设置登录态
 	//生成一个JWT token
-	token := jwt.New(jwt.SigningMethodHS512)
+
+	claims := UserClaims{
+		Uid: user.Id,
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
 	tokenStr, err := token.SignedString([]byte("8b8d2e454737a253e0b12365a1ab97e2"))
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, "系统错误")
@@ -275,6 +280,25 @@ func (u *UserHandler) Edit(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "用户信息修改成功"})
 }
 
+func (u *UserHandler) ProfileJWT(ctx *gin.Context) {
+	c, ok := ctx.Get("claims")
+	//可以断点，必然有claims
+	if !ok {
+		//监控住这里
+		ctx.String(http.StatusOK, "系统错误")
+		return
+	}
+	//ok代表是不是*UserClaims
+	claims, ok := c.(*UserClaims)
+	if !ok {
+		//也可以监控住这里
+		ctx.String(http.StatusOK, "系统错误")
+		return
+	}
+	println(claims.Uid)
+	//这里补充profile的其他代码
+}
+
 func (u *UserHandler) Profile(ctx *gin.Context) {
 	//ctx.String(http.StatusOK, "这是你的profile")
 	userIdStr := ctx.Query("id")
@@ -311,4 +335,10 @@ func (u *UserHandler) Profile(ctx *gin.Context) {
 		Description: mes.Description,
 	}
 	ctx.JSON(http.StatusOK, mess)
+}
+
+type UserClaims struct {
+	jwt.RegisteredClaims
+	//声明要放进token里面的数据
+	Uid int64
 }
