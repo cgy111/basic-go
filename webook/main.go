@@ -33,6 +33,8 @@ func initWebServer() *gin.Engine {
 		//AllowOrigins: []string{"http://localhost:3000"},
 		//AllowMethods: []string{"POST", "GET"},
 		AllowHeaders: []string{"Content-Type", "Authorization"},
+		//不加，前端拿不到
+		ExposeHeaders: []string{"x-jwt-token"},
 		//是否允许你带cookie之类的东西
 		AllowCredentials: true,
 		AllowOriginFunc: func(origin string) bool {
