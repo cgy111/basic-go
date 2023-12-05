@@ -69,12 +69,18 @@ func (l *LoginJWTMiddlewareBuilder) Build() gin.HandlerFunc {
 			ctx.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
-		claims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(time.Minute))
-		tokenStr, err = token.SignedString([]byte("8b8d2e454737a253e0b12365a1ab97e2"))
-		if err != nil {
-			log.Print("jwt 续约失败", err)
+		//每十秒刷新一次
+		now := time.Now()
+		if claims.ExpiresAt.Sub(now) < time.Second*50 {
+			//每十秒刷新一次
+			claims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(time.Minute))
+			tokenStr, err = token.SignedString([]byte("8b8d2e454737a253e0b12365a1ab97e2"))
+			if err != nil {
+				log.Print("jwt 续约失败", err)
+			}
+			ctx.Header("x-jwt-token", tokenStr)
 		}
-		ctx.Header("x-jwt-token", tokenStr)
+
 		ctx.Set("claims", claims)
 		//ctx.Set("userId",claims.Uid)
 	}
