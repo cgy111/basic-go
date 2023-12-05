@@ -10,6 +10,7 @@ import (
 	jwt "github.com/golang-jwt/jwt/v5"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 // 定义和用户有关的路由
@@ -152,6 +153,9 @@ func (u *UserHandler) LoginJWT(ctx *gin.Context) {
 	//生成一个JWT token
 
 	claims := UserClaims{
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute)),
+		},
 		Uid: user.Id,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, claims)

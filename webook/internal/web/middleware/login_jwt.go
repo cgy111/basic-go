@@ -5,6 +5,7 @@ import (
 	"encoding/gob"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -59,37 +60,22 @@ func (l *LoginJWTMiddlewareBuilder) Build() gin.HandlerFunc {
 			ctx.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
+		//claims.ExpiresAt.Time.Before(time.Now()){
+		//	//过期了
+		//}
 		//err为nil，token不为nil
 		if token == nil || !token.Valid || claims.Uid == 0 {
 			//	没有登录
 			ctx.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
+		claims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(time.Minute))
+		tokenStr, err = token.SignedString([]byte("8b8d2e454737a253e0b12365a1ab97e2"))
+		if err != nil {
+			log.Print("jwt 续约失败", err)
+		}
+		ctx.Header("x-jwt-token", tokenStr)
 		ctx.Set("claims", claims)
 		//ctx.Set("userId",claims.Uid)
 	}
 }
-
-/*func (l *LoginMiddlewareBuilder) CheckLogin() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		//这些不需要登录校验
-		if ctx.Request.URL.Path == "/users/login" ||
-			ctx.Request.URL.Path == "/users/signup" {
-			return
-		}
-
-		sess := sessions.Default(ctx)
-		///*if sess != nil {
-		////	没有登录
-		//	ctx.AbortWithStatus(http.StatusUnauthorized)
-		//	return
-		//}
-		id := sess.Get("userId")
-		if id == nil {
-			//	没有登录
-			ctx.AbortWithStatus(http.StatusUnauthorized)
-			return
-		}
-		fmt.Println("1")
-	}
-}*/
