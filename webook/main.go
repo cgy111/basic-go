@@ -1,6 +1,8 @@
 package main
 
 import (
+	"basic-go/webook/internal/pkg/ginx/middleware/ratelimit"
+	_ "basic-go/webook/internal/pkg/ginx/middleware/ratelimit"
 	"basic-go/webook/internal/repository"
 	"basic-go/webook/internal/repository/dao"
 	"basic-go/webook/internal/service"
@@ -8,8 +10,10 @@ import (
 	"basic-go/webook/internal/web/middleware"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/redis"
+	"github.com/gin-contrib/sessions/memstore"
+	_ "github.com/gin-contrib/sessions/redis"
 	"github.com/gin-gonic/gin"
+	redis "github.com/redis/go-redis/v9"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"strings"
@@ -28,6 +32,14 @@ func main() {
 
 func initWebServer() *gin.Engine {
 	server := gin.Default()
+
+	//限流
+	redisClient := redis.NewClient(&redis.Options{
+		Addr: "localhost:6319",
+	})
+	server.Use(ratelimit.NewBuilder(redisClient, time.Second, 100).Build())
+
+	store := memstore.NewStore([]byte("8b8d2e454737a253e0b12365a1ab97e2"), []byte("d9d4e451c8d6b858ca341a3e623411e8"))
 	//跨域
 	server.Use(cors.New(cors.Config{
 		//AllowOrigins: []string{"http://localhost:3000"},
@@ -50,12 +62,12 @@ func initWebServer() *gin.Engine {
 	//store := cookie.NewStore([]byte("secret"))
 	//store := memstore.NewStore([]byte("8b8d2e454737a253e0b12365a1ab97e2"), []byte("d9d4e451c8d6b858ca341a3e623411e8"))
 
-	store, err := redis.NewStore(16, "tcp", "localhost:6379", "",
+	/*store, err := redis.NewStore(16, "tcp", "localhost:6379", "",
 		[]byte("8b8d2e454737a253e0b12365a1ab97e2"), []byte("d9d4e451c8d6b858ca341a3e623411e8"))
 
 	if err != nil {
 		panic(err)
-	}
+	}*/
 
 	server.Use(sessions.Sessions("mysession", store))
 
