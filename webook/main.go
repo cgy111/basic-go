@@ -1,13 +1,12 @@
 package main
 
 import (
-	"basic-go/webook/internal/pkg/ginx/middleware/ratelimit"
-	_ "basic-go/webook/internal/pkg/ginx/middleware/ratelimit"
 	"basic-go/webook/internal/repository"
 	"basic-go/webook/internal/repository/dao"
 	"basic-go/webook/internal/service"
 	"basic-go/webook/internal/web"
 	"basic-go/webook/internal/web/middleware"
+	"basic-go/webook/pkg/ginx/middleware/ratelimit"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/memstore"
@@ -16,16 +15,22 @@ import (
 	redis "github.com/redis/go-redis/v9"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"net/http"
 	"strings"
 	"time"
 )
 
 func main() {
-	db := initDB()
+	/*db := initDB()
 	server := initWebServer()
 	u := initUser(db)
 	//u.RegisterRoutesV1(server.Group("/users"))
-	u.RegisterRoutes(server)
+	u.RegisterRoutes(server)*/
+
+	server := gin.Default()
+	server.GET("/hello", func(ctx *gin.Context) {
+		ctx.String(http.StatusOK, "你好，欢迎你")
+	})
 	server.Run(":8080")
 
 }
