@@ -10,7 +10,8 @@ spec:
 #      你访问的端口
       port: 3309
       targetPort: 3306
-  type: LoadBalancer
+      nodePort: 30001
+  type: NodePort
 
 
   

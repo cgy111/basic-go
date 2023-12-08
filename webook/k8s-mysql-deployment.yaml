@@ -22,7 +22,17 @@ spec:
             - name: MYSQL_ROOT_PASSWORD
               value: root
           imagePullPolicy: IfNotPresent
+          volumeMounts:
+#            - 这里要对应到 mysql 的数据存储的位置
+#            - 通过MySQL 的配置文件可以改这个目录
+            - mountPath: /var/lib/mysql
+#              我POD里面有那么多volumes，我要用哪个
+              name: mysql-storage
           ports:
             - containerPort: 3306
       restartPolicy: Always
+      volumes:
+        - name: mysql-storage
+          persistentVolumeClaim:
+            claimName: webook-mysql-claim
       
