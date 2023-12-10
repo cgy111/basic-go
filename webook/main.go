@@ -1,15 +1,18 @@
 package main
 
 import (
+	"basic-go/webook/config"
 	"basic-go/webook/internal/repository"
 	"basic-go/webook/internal/repository/dao"
 	"basic-go/webook/internal/service"
 	"basic-go/webook/internal/web"
 	"basic-go/webook/internal/web/middleware"
+	"basic-go/webook/pkg/ginx/middleware/ratelimit"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/redis"
+	"github.com/gin-contrib/sessions/memstore"
 	"github.com/gin-gonic/gin"
+	redis "github.com/redis/go-redis/v9"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"strings"
@@ -22,12 +25,23 @@ func main() {
 	u := initUser(db)
 	//u.RegisterRoutesV1(server.Group("/users"))
 	u.RegisterRoutes(server)
-	server.Run(":8080")
+	//server := gin.Default()
+	//server.GET("/hello", func(ctx *gin.Context) {
+	//	ctx.String(http.StatusOK, "你好，欢迎使用k8s")
+	//})
+	server.Run(":8081")
 
 }
 
 func initWebServer() *gin.Engine {
 	server := gin.Default()
+	//限流
+	redisClient := redis.NewClient(&redis.Options{
+		Addr: config.Config.Redis.Addr,
+	})
+	server.Use(ratelimit.NewBuilder(redisClient, time.Second, 100).Build())
+	store := memstore.NewStore([]byte("8b8d2e454737a253e0b12365a1ab97e2"), []byte("d9d4e451c8d6b858ca341a3e623411e8"))
+
 	//跨域
 	server.Use(cors.New(cors.Config{
 		//AllowOrigins: []string{"http://localhost:3000"},
@@ -50,12 +64,12 @@ func initWebServer() *gin.Engine {
 	//store := cookie.NewStore([]byte("secret"))
 	//store := memstore.NewStore([]byte("8b8d2e454737a253e0b12365a1ab97e2"), []byte("d9d4e451c8d6b858ca341a3e623411e8"))
 
-	store, err := redis.NewStore(16, "tcp", "localhost:6379", "",
-		[]byte("8b8d2e454737a253e0b12365a1ab97e2"), []byte("d9d4e451c8d6b858ca341a3e623411e8"))
-
-	if err != nil {
-		panic(err)
-	}
+	//store, err := redis.NewStore(16, "tcp", "localhost:6379", "",
+	//	[]byte("8b8d2e454737a253e0b12365a1ab97e2"), []byte("d9d4e451c8d6b858ca341a3e623411e8"))
+	//
+	//if err != nil {
+	//	panic(err)
+	//}
 
 	server.Use(sessions.Sessions("mysession", store))
 
@@ -80,7 +94,7 @@ func initUser(db *gorm.DB) *web.UserHandler {
 }
 
 func initDB() *gorm.DB {
-	db, err := gorm.Open(mysql.Open("root:root@tcp(localhost:13316)/webook?charset=utf8mb4&parseTime=True&loc=Local"))
+	db, err := gorm.Open(mysql.Open(config.Config.DB.DSN))
 	if err != nil {
 		//只在初始化的时候panic
 		//panic相当于整个goroutine结束
