@@ -9,7 +9,7 @@ spec:
   ports:
     - protocol: TCP
       name: http
-      port: 88
-      targetPort: 8080
+      port: 81
+      targetPort: 8081
 
   

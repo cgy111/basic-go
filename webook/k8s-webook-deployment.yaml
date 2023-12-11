@@ -20,4 +20,4 @@ spec:
         - name: webook
           image: cgy11/webook:v.0.0.1
           ports:
-            - containerPort: 8080
+            - containerPort: 8081
