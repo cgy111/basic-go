@@ -6,3 +6,4 @@ WORKDIR /app
 #CMD 是执行命令
 #最佳
 ENTRYPOINT ["/app/webook"]
+

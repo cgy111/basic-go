@@ -23,10 +23,10 @@ spec:
               value: root
           imagePullPolicy: IfNotPresent
           volumeMounts:
-            #            - 这里要对应到 mysql 的数据存储的位置
-            #            - 通过MySQL 的配置文件可以改这个目录
+#            - 这里要对应到 mysql 的数据存储的位置
+#            - 通过MySQL 的配置文件可以改这个目录
             - mountPath: /var/lib/mysql
-              #              我POD里面有那么多volumes，我要用哪个
+#              我POD里面有那么多volumes，我要用哪个
               name: mysql-storage
           ports:
             - containerPort: 3306

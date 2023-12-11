@@ -20,3 +20,4 @@ spec:
           image: redis:latest
           imagePullPolicy: IfNotPresent
       restartPolicy: Always
+      
