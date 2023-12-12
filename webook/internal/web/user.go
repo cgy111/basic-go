@@ -9,7 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 	jwt "github.com/golang-jwt/jwt/v5"
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -305,43 +304,43 @@ func (u *UserHandler) ProfileJWT(ctx *gin.Context) {
 	//这里补充profile的其他代码
 }
 
-func (u *UserHandler) Profile(ctx *gin.Context) {
-	//ctx.String(http.StatusOK, "这是你的profile")
-	userIdStr := ctx.Query("id")
-
-	if userIdStr == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Id不能为空"})
-		return
-	}
-
-	userId, err := strconv.Atoi(userIdStr)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Id不正确"})
-		return
-	}
-	mes, err := u.svc.Profile(ctx, userId)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "查询失败"})
-		return
-	}
-
-	type UserResponse struct {
-		Id          int64  `json:"id"`
-		Email       string `json:"email"`
-		Name        string `json:"name"`
-		Birthday    string `json:"birthday"`
-		Description string `json:"description"`
-	}
-
-	mess := UserResponse{
-		Id:          mes.Id,
-		Email:       mes.Email,
-		Name:        mes.Name,
-		Birthday:    mes.Birthday,
-		Description: mes.Description,
-	}
-	ctx.JSON(http.StatusOK, mess)
-}
+//func (u *UserHandler) Profile(ctx *gin.Context) {
+//	//ctx.String(http.StatusOK, "这是你的profile")
+//	userIdStr := ctx.Query("id")
+//
+//	if userIdStr == "" {
+//		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Id不能为空"})
+//		return
+//	}
+//
+//	userId, err := strconv.Atoi(userIdStr)
+//	if err != nil {
+//		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Id不正确"})
+//		return
+//	}
+//	mes, err := u.svc.Profile(ctx, userId)
+//	if err != nil {
+//		ctx.JSON(http.StatusBadRequest, gin.H{"error": "查询失败"})
+//		return
+//	}
+//
+//	type UserResponse struct {
+//		Id          int64  `json:"id"`
+//		Email       string `json:"email"`
+//		Name        string `json:"name"`
+//		Birthday    string `json:"birthday"`
+//		Description string `json:"description"`
+//	}
+//
+//	mess := UserResponse{
+//		Id:          mes.Id,
+//		Email:       mes.Email,
+//		Name:        mes.Name,
+//		Birthday:    mes.Birthday,
+//		Description: mes.Description,
+//	}
+//	ctx.JSON(http.StatusOK, mess)
+//}
 
 type UserClaims struct {
 	jwt.RegisteredClaims

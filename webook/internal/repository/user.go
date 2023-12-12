@@ -36,7 +36,7 @@ func (r *UserRepository) FindByemail(ctx context.Context, email string) (domain.
 	}, nil
 }
 
-func (r *UserRepository) FindByid(ctx context.Context, id int) (domain.User, error) {
+func (r *UserRepository) FindByid(ctx context.Context, id int64) (domain.User, error) {
 	u, err := r.dao.FindById(ctx, id)
 	if err != nil {
 		return domain.User{}, err
