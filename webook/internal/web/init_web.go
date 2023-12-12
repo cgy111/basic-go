@@ -33,7 +33,7 @@ func registerUsersRoutes(server *gin.Engine) {
 		})
 	*/
 
-	server.GET("/users/profilre", u.Profile)
+	//server.GET("/users/profilre", u.Profile)
 
 	/*
 		//REST风格

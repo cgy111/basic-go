@@ -17,6 +17,7 @@ function init(args)
     prefix = uuid()
 end
 
+-- 每次请求都会调用一次
 function request()
     body=string.format('{"email":"%s%d@qq.com", "password":"hello#world123", "confirmPassword": "hello#world123"}', prefix, cnt)
     cnt = cnt + 1
