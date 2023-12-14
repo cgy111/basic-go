@@ -32,9 +32,9 @@ type UserCache struct {
 }
 
 // NewUserCache
-// A用到了 B ，B一定是接口
-// A用到了 B ，B一定是A的字段
-// A用到了 B ，A绝对不初始化B，而是从外部注入
+// A用到了 B ，B一定是接口=>这是保证面向接口
+// A用到了 B ，B一定是A的字段=>规避包变量，包方法，都非常缺乏扩张性
+// A用到了 B ，A绝对不初始化B，而是从外部注入=>保持依赖注入(DI，Dependency Injection)和控制反转( Inversion of Control)
 func NewUserCache(client redis.Cmdable) *UserCache {
 	return &UserCache{
 		client:     client,
