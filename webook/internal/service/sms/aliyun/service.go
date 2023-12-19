@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/dysmsapi"
 	"strconv"
+	"strings"
 )
 
 type Service struct {
@@ -27,7 +28,7 @@ func NewService(signName, accessKeyId, accessKeySecret string, client *dysmsapi.
 func (s *Service) SendAliyun(tpl string, args []string, numbers ...string) error {
 	req := dysmsapi.CreateSendSmsRequest()
 	req.Scheme = "https"
-	req.PhoneNumbers = numbers[0]
+	req.PhoneNumbers = strings.Join(numbers, ",")
 	req.SignName = s.signName
 	req.TemplateCode = tpl
 	//传入JSON
@@ -53,7 +54,7 @@ func (s *Service) SendAliyun(tpl string, args []string, numbers ...string) error
 func (s *Service) SendAliyunV1(tpl string, args []sms.NameArg, numbers ...string) error {
 	req := dysmsapi.CreateSendSmsRequest()
 	req.Scheme = "https"
-	req.PhoneNumbers = numbers[0]
+	req.PhoneNumbers = strings.Join(numbers, ",")
 	req.SignName = s.signName
 	req.TemplateCode = tpl
 	//传入JSON
@@ -63,6 +64,29 @@ func (s *Service) SendAliyunV1(tpl string, args []sms.NameArg, numbers ...string
 	}
 	//这就意味着短信验证码是{0}
 	bCode, err := json.Marshal(argsMap)
+	if err != nil {
+		return err
+	}
+	req.TemplateParam = string(bCode)
+	resp, err := s.client.SendSms(req)
+	if err != nil {
+		return err
+	}
+	if resp.Code != "OK" {
+		return fmt.Errorf("发送短信失败: %s,%s", resp.Code, resp.Message)
+	}
+	return nil
+}
+
+func (s *Service) SendAliyunV2(tpl string, args any, numbers ...string) error {
+	req := dysmsapi.CreateSendSmsRequest()
+	req.Scheme = "https"
+	req.PhoneNumbers = strings.Join(numbers, ",")
+	req.SignName = s.signName
+	req.TemplateCode = tpl
+	//传入JSON
+	//这就意味着短信验证码是{0}
+	bCode, err := json.Marshal(args.(map[string]string))
 	if err != nil {
 		return err
 	}
