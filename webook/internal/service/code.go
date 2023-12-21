@@ -15,6 +15,13 @@ type CodeService struct {
 	smsSvc sms.Service
 }
 
+func NewCodeService(repo *repository.CodeRepository, smsSvc sms.Service) *CodeService {
+	return &CodeService{
+		repo:   repo,
+		smsSvc: smsSvc,
+	}
+}
+
 // Send 发送验证码
 func (svc *CodeService) Send(ctx context.Context,
 	//区别业务场景
