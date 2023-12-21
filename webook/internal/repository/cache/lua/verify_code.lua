@@ -20,11 +20,11 @@ if cnt <=0 then
 elseif expectedCode == code then
     --验证成功
     --用完，不能再用了
-    redis.call("set",cntKey,cnt-1)
+    redis.call("set",cntKey,-1)
     --redis.call("del",key)
     return 0
 else
     --验证失败
-    redis.call("decr",cntKey,cnt-1)
+    redis.call("decr",cntKey)
     return -2
 end
