@@ -16,7 +16,7 @@ wrk.headers["User-Agent"] = ""
 
 -- 发送第一次authenticate认证请求
 request = function ()
-    body = '{"email": "123o@qq.com","password": "hello@world123}'
+    body = '{"email":"123cgy@qq.com","password":"hello@world123}'
     return wrk.format(method, path, wrk.headers, body)
 end
 
