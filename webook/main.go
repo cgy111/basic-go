@@ -123,9 +123,9 @@ func initDB() *gorm.DB {
 	return db
 
 }
-func initRedis() *redis.Client {
-	rdb := redis.NewClient(&redis.Options{
+func initRedis() redis.Cmdable {
+	redisClient := redis.NewClient(&redis.Options{
 		Addr: config.Config.Redis.Addr,
 	})
-	return rdb
+	return redisClient
 }
