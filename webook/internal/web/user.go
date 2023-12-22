@@ -81,10 +81,15 @@ func (u *UserHandler) SendLoginSmsCode(ctx *gin.Context) {
 	}
 	err := u.codeSvc.Send(ctx, biz, req.Phone)
 	if err != nil {
-		ctx.String(http.StatusOK, "系统错误")
+		ctx.JSON(http.StatusOK, Result{
+			Code: 5,
+			Msg:  "系统错误",
+		})
 		return
 	}
-	ctx.String(http.StatusOK, "发送成功")
+	ctx.JSON(http.StatusOK, Result{
+		Msg: "发送成功",
+	})
 }
 
 func (u *UserHandler) Signup(ctx *gin.Context) {
