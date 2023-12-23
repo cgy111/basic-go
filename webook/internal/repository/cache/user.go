@@ -38,7 +38,7 @@ type UserCache struct {
 func NewUserCache(client redis.Cmdable) *UserCache {
 	return &UserCache{
 		client:     client,
-		expiration: time.Minute * 15,
+		expiration: time.Minute * 10,
 	}
 }
 

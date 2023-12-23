@@ -10,7 +10,7 @@ type Service interface {
 	//SendAliyunV2(ctx context.Context, tpl string, args any, numbers ...string) error
 }
 
-type NameArg struct {
-	Name string
-	Val  string
-}
+//type NameArg struct {
+//	Name string
+//	Val  string
+//}

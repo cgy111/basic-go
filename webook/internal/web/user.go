@@ -71,11 +71,13 @@ func (u *UserHandler) LoginSMS(ctx *gin.Context) {
 }
 
 func (u *UserHandler) SendLoginSmsCode(ctx *gin.Context) {
+	fmt.Println("send sms code")
 	type Req struct {
 		Phone string `json:"phone"`
 	}
 	const biz = "login"
 	var req Req
+	fmt.Println(req.Phone)
 	if err := ctx.Bind(&req); err != nil {
 		return
 	}

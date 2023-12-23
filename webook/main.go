@@ -9,6 +9,7 @@ import (
 	"basic-go/webook/internal/service/sms/memory"
 	"basic-go/webook/internal/web"
 	"basic-go/webook/internal/web/middleware"
+	"fmt"
 	"github.com/gin-contrib/cors"
 	_ "github.com/gin-contrib/sessions/redis"
 	"github.com/gin-gonic/gin"
@@ -107,7 +108,9 @@ func initUser(db *gorm.DB, rdb redis.Cmdable) *web.UserHandler {
 }
 
 func initDB() *gorm.DB {
+	fmt.Println("初始化数据库")
 	db, err := gorm.Open(mysql.Open(config.Config.DB.DSN))
+	fmt.Println(err)
 	if err != nil {
 		//只在初始化的时候panic
 		//panic相当于整个goroutine结束
