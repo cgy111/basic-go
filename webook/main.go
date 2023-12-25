@@ -108,7 +108,7 @@ func initUser(db *gorm.DB, rdb redis.Cmdable) *web.UserHandler {
 }
 
 func initDB() *gorm.DB {
-	fmt.Println("初始化数据库")
+	//fmt.Println("初始化数据库")
 	db, err := gorm.Open(mysql.Open(config.Config.DB.DSN))
 	fmt.Println(err)
 	if err != nil {

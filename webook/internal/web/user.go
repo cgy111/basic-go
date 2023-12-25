@@ -12,6 +12,8 @@ import (
 	"time"
 )
 
+const biz = "login"
+
 // 定义和用户有关的路由
 type UserHandler struct {
 	svc            *service.UserService
@@ -21,6 +23,7 @@ type UserHandler struct {
 	nameExp        *regexp.Regexp
 	birthdayExp    *regexp.Regexp
 	descriptionExp *regexp.Regexp
+	phoneExp       *regexp.Regexp
 }
 
 func NewUserHandler(svc *service.UserService, codeSvc *service.CodeService) *UserHandler {
@@ -30,12 +33,14 @@ func NewUserHandler(svc *service.UserService, codeSvc *service.CodeService) *Use
 		nameRegexPattern        = "^.{3,16}$"
 		birthdayRegexPattern    = "^\\d{4}-\\d{2}-\\d{2}$"
 		descriptionRegexPattern = "^.{1,500}$"
+		phoneRegexPattern       = "^1[3-9]\\d{9}$"
 	)
 	emailExp := regexp.MustCompile(emailRegexPattern, regexp.None)
 	passwordExp := regexp.MustCompile(passwordRegexPattern, regexp.None)
 	nameEpx := regexp.MustCompile(nameRegexPattern, regexp.None)
 	birthdayExp := regexp.MustCompile(birthdayRegexPattern, regexp.None)
 	userProfilEpx := regexp.MustCompile(descriptionRegexPattern, regexp.None)
+	phoneExp := regexp.MustCompile(phoneRegexPattern, regexp.None)
 	return &UserHandler{
 		svc:            svc,
 		codeSvc:        codeSvc,
@@ -44,6 +49,7 @@ func NewUserHandler(svc *service.UserService, codeSvc *service.CodeService) *Use
 		nameExp:        nameEpx,
 		birthdayExp:    birthdayExp,
 		descriptionExp: userProfilEpx,
+		phoneExp:       phoneExp,
 	}
 }
 
@@ -63,25 +69,19 @@ func (u *UserHandler) RegisterRoutes(server *gin.Engine) {
 	ug.POST("/login", u.LoginJWT)
 	ug.POST("/edit", u.Edit)
 	ug.POST("/login_sms/code/send", u.SendLoginSmsCode)
-	ug.POST("/login_sms/", u.LoginSMS)
+	ug.POST("/login_sms", u.LoginSMS)
 }
 
 func (u *UserHandler) LoginSMS(ctx *gin.Context) {
-
-}
-
-func (u *UserHandler) SendLoginSmsCode(ctx *gin.Context) {
-	fmt.Println("send sms code")
 	type Req struct {
 		Phone string `json:"phone"`
+		Code  string `json:"code"`
 	}
-	const biz = "login"
 	var req Req
-	fmt.Println(req.Phone)
 	if err := ctx.Bind(&req); err != nil {
 		return
 	}
-	err := u.codeSvc.Send(ctx, biz, req.Phone)
+	ok, err := u.codeSvc.Verify(ctx, biz, req.Phone, req.Code)
 	if err != nil {
 		ctx.JSON(http.StatusOK, Result{
 			Code: 5,
@@ -89,9 +89,72 @@ func (u *UserHandler) SendLoginSmsCode(ctx *gin.Context) {
 		})
 		return
 	}
+	if !ok {
+		ctx.JSON(http.StatusOK, Result{
+			Code: 4,
+			Msg:  "验证码有误",
+		})
+		return
+	}
 	ctx.JSON(http.StatusOK, Result{
-		Msg: "发送成功",
+		Code: 4,
+		Msg:  "验证码验证通过",
 	})
+}
+
+func (u *UserHandler) SendLoginSmsCode(ctx *gin.Context) {
+	//fmt.Println("send sms code")
+	type Req struct {
+		Phone string `json:"phone"`
+	}
+
+	var req Req
+	//fmt.Println(req.Phone)
+	if err := ctx.Bind(&req); err != nil {
+		return
+	}
+
+	//if req.Phone == "" {
+	//	ctx.JSON(http.StatusOK, Result{
+	//		Code: 4,
+	//		Msg:  "输入有误",
+	//	})
+	//	return
+	//}
+	ok, err := u.phoneExp.MatchString(req.Phone)
+	if err != nil {
+		ctx.JSON(http.StatusOK, Result{
+			Code: 5,
+			Msg:  "系统错误",
+		})
+		return
+	}
+
+	if !ok {
+		ctx.JSON(http.StatusOK, Result{
+			Code: 4,
+			Msg:  "输入有误",
+		})
+		return
+	}
+
+	err = u.codeSvc.Send(ctx, biz, req.Phone)
+	switch err {
+	case nil:
+		ctx.JSON(http.StatusOK, Result{
+			Msg: "发送成功",
+		})
+	case service.ErrorCodeSendTooMany:
+		ctx.JSON(http.StatusOK, Result{
+			Msg: "发送太频繁，请稍后再试",
+		})
+
+	default:
+		ctx.JSON(http.StatusOK, Result{
+			Code: 5,
+			Msg:  "系统错误",
+		})
+	}
 }
 
 func (u *UserHandler) Signup(ctx *gin.Context) {
