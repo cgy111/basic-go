@@ -25,7 +25,7 @@ func NewUserService(repo *repository.UserRepository) *UserService {
 
 func (svc *UserService) Login(ctx context.Context, email, password string) (domain.User, error) {
 	//	先找用户
-	u, err := svc.repo.FindByemail(ctx, email)
+	u, err := svc.repo.FindByEmail(ctx, email)
 	if err == repository.ErrUserNotFound {
 		return domain.User{}, ErrInvalidUserOrPassword
 	}
@@ -60,6 +60,28 @@ func (svc *UserService) Edit(ctx context.Context, u domain.User) error {
 //	func (svc *UserService) Profile(ctx context.Context, id int) (domain.User, error) {
 //		return svc.repo.FindByid(ctx, id)
 //	}
+
+func (svc *UserService) FindOrCreate(ctx context.Context, phone string) (domain.User, error) {
+	//panic("先不实现")
+	u, err := svc.repo.FindByPhone(ctx, phone)
+	//要判断，有没有这个用户
+	if err != repository.ErrUserNotFound {
+		//nil会进了这里
+		//不为ErrUserNotFound的也会进来这里
+		return u, err
+	}
+	//明确知道没有这个用户，创建用户
+	u = domain.User{
+		Phone: phone,
+	}
+	err = svc.repo.Create(ctx, u)
+	if err != nil {
+		return u, err
+	}
+	//因为这里会遇到主从延迟问题
+	return svc.repo.FindByPhone(ctx, phone)
+}
+
 func (svc *UserService) Profile(ctx context.Context, id int64) (domain.User, error) {
 	u, err := svc.repo.FindById(ctx, id)
 	return u, err

@@ -57,7 +57,7 @@ func (svc *CodeService) generateCode() string {
 	//	六位数，num在0-99999之间，包含0和99999
 	num := rand.Intn(1000000)
 	//	不足六位，前面补0
-	return fmt.Sprintf("%6d", num)
+	return fmt.Sprintf("%06d", num)
 }
 
 /*func (svc *CodeService) VerifyV1(ctx context.Context, biz string,
