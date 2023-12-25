@@ -9,7 +9,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var ErrUserDuplicateEmail = repository.ErrUserDuplicateEmail
+var ErrUserDuplicate = repository.ErrUserDuplicate
 var ErrInvalidUserOrPassword = errors.New("账号/邮箱或密码不对")
 
 type UserService struct {
@@ -63,19 +63,26 @@ func (svc *UserService) Edit(ctx context.Context, u domain.User) error {
 
 func (svc *UserService) FindOrCreate(ctx context.Context, phone string) (domain.User, error) {
 	//panic("先不实现")
+	//这个叫做快路径
 	u, err := svc.repo.FindByPhone(ctx, phone)
 	//要判断，有没有这个用户
 	if err != repository.ErrUserNotFound {
+		//绝大部分请求会进来这里
 		//nil会进了这里
 		//不为ErrUserNotFound的也会进来这里
 		return u, err
 	}
+	//在系统资源不足，触发降级之后，不执行慢路径
+	//if ctx.Value("降级") =="true"{
+	//	return domain.User{},errors.New("系统降级了")
+	//}
+	//这个叫做慢路径
 	//明确知道没有这个用户，创建用户
 	u = domain.User{
 		Phone: phone,
 	}
 	err = svc.repo.Create(ctx, u)
-	if err != nil {
+	if err != nil && err != repository.ErrUserDuplicate {
 		return u, err
 	}
 	//因为这里会遇到主从延迟问题

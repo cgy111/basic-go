@@ -10,8 +10,8 @@ import (
 )
 
 var (
-	ErrUserDuplicateEmail = dao.ErrUserDuplocateEmail
-	ErrUserNotFound       = dao.ErrUserNotFound
+	ErrUserDuplicate = dao.ErrUserDuplocate
+	ErrUserNotFound  = dao.ErrUserNotFound
 )
 
 //var ErrUserDuplicateEmailV1 = fmt.Errorf("%w 邮箱冲突",dao.ErrUserDuplocateEmail)
