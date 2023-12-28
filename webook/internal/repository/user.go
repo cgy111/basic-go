@@ -122,20 +122,27 @@ func (r *UserRepository) domainToEntity(u domain.User) dao.User {
 			//确实有手机号
 			Valid: u.Email != "",
 		},
+		Password: u.Password,
+		Name:     u.Name,
 		Phone: sql.NullString{
 			String: u.Phone,
 			Valid:  u.Phone != "",
 		},
-		Ctime: u.Ctime.UnixMilli(),
+		Birthday:    u.Birthday,
+		Description: u.Description,
+		Ctime:       u.Ctime.UnixMilli(),
 	}
 }
 
 func (r *UserRepository) entityToDomain(u dao.User) domain.User {
 	return domain.User{
-		Id:       u.Id,
-		Email:    u.Email.String,
-		Password: u.Password,
-		Phone:    u.Phone.String,
-		Ctime:    time.UnixMilli(u.Ctime),
+		Id:          u.Id,
+		Email:       u.Email.String,
+		Password:    u.Password,
+		Name:        u.Name,
+		Phone:       u.Phone.String,
+		Birthday:    u.Birthday,
+		Description: u.Description,
+		Ctime:       time.UnixMilli(u.Ctime),
 	}
 }
