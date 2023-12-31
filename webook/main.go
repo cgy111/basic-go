@@ -21,17 +21,19 @@ import (
 )
 
 func main() {
-	db := initDB()
-	rdb := initRedis()
-	server := initWebServer()
-	u := initUser(db, rdb)
+	//db := initDB()
+	//rdb := initRedis()
+	//server := initWebServer()
+	//u := initUser(db, rdb)
 	//u.RegisterRoutesV1(server.Group("/users"))
-	u.RegisterRoutes(server)
+	//u.RegisterRoutes(server)
 	//
 	//server := gin.Default()
 	//server.GET("/hello", func(ctx *gin.Context) {
 	//	ctx.String(http.StatusOK, "你好，欢迎你")
 	//})
+
+	server := InitWebServer()
 	server.Run(":8080")
 
 }
