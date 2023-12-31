@@ -22,7 +22,12 @@ import (
 
 var ErrNotExist = redis.Nil
 
-type UserCache struct {
+type UserCache interface {
+	Get(ctx context.Context, id int64) (domain.User, error)
+	Set(ctx context.Context, u domain.User) error
+}
+
+type RedisUserCache struct {
 	//cache CacheV1
 	//传单机redis可以
 	//传cluster 的 redis也可以
@@ -35,8 +40,8 @@ type UserCache struct {
 // A用到了 B ，B一定是接口=>这是保证面向接口
 // A用到了 B ，B一定是A的字段=>规避包变量，包方法，都非常缺乏扩张性
 // A用到了 B ，A绝对不初始化B，而是从外部注入=>保持依赖注入(DI，Dependency Injection)和控制反转( Inversion of Control)
-func NewUserCache(client redis.Cmdable) *UserCache {
-	return &UserCache{
+func NewUserCache(client redis.Cmdable) UserCache {
+	return &RedisUserCache{
 		client:     client,
 		expiration: time.Minute * 10,
 	}
@@ -44,7 +49,7 @@ func NewUserCache(client redis.Cmdable) *UserCache {
 
 // 只要error为niu，就认为缓存有数据
 // 如果没有数据，返回一个特定的error
-func (cache *UserCache) Get(ctx context.Context, id int64) (domain.User, error) {
+func (cache *RedisUserCache) Get(ctx context.Context, id int64) (domain.User, error) {
 	key := cache.key(id)
 	//数据不存在，err=redis.Nil
 	val, err := cache.client.Get(ctx, key).Bytes()
@@ -56,7 +61,7 @@ func (cache *UserCache) Get(ctx context.Context, id int64) (domain.User, error) 
 	return u, err
 }
 
-func (cache *UserCache) Set(ctx context.Context, u domain.User) error {
+func (cache *RedisUserCache) Set(ctx context.Context, u domain.User) error {
 	val, err := json.Marshal(u)
 	if err != nil {
 		return err
@@ -65,7 +70,7 @@ func (cache *UserCache) Set(ctx context.Context, u domain.User) error {
 	return cache.client.Set(ctx, key, val, cache.expiration).Err()
 }
 
-func (cache *UserCache) key(id int64) string {
+func (cache *RedisUserCache) key(id int64) string {
 	return fmt.Sprintf("user:info:%d", id)
 
 }

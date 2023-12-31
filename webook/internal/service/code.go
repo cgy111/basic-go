@@ -15,20 +15,30 @@ var (
 
 const codeTplId = "1877556"
 
-type CodeService struct {
-	repo   *repository.CodeRepository
+type CodeService interface {
+	Send(ctx context.Context,
+		//区别业务场景
+		biz string,
+		phone string) error
+
+	Verify(ctx context.Context, biz string,
+		phone string, inputCode string) (bool, error)
+}
+
+type codeService struct {
+	repo   repository.CodeRepository
 	smsSvc sms.Service
 }
 
-func NewCodeService(repo *repository.CodeRepository, smsSvc sms.Service) *CodeService {
-	return &CodeService{
+func NewCodeService(repo repository.CodeRepository, smsSvc sms.Service) CodeService {
+	return &codeService{
 		repo:   repo,
 		smsSvc: smsSvc,
 	}
 }
 
 // Send 发送验证码
-func (svc *CodeService) Send(ctx context.Context,
+func (svc *codeService) Send(ctx context.Context,
 	//区别业务场景
 	biz string,
 	phone string) error {
@@ -45,7 +55,7 @@ func (svc *CodeService) Send(ctx context.Context,
 }
 
 // Verify 验证验证码
-func (svc *CodeService) Verify(ctx context.Context, biz string,
+func (svc *codeService) Verify(ctx context.Context, biz string,
 	phone string, inputCode string) (bool, error) {
 	//phone_code:$biz:138xxxxxx
 	//code:$biz:138xxxxxx
@@ -53,7 +63,7 @@ func (svc *CodeService) Verify(ctx context.Context, biz string,
 	return svc.repo.Verify(ctx, biz, phone, inputCode)
 }
 
-func (svc *CodeService) generateCode() string {
+func (svc *codeService) generateCode() string {
 	//	六位数，num在0-99999之间，包含0和99999
 	num := rand.Intn(1000000)
 	//	不足六位，前面补0
