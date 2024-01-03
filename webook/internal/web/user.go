@@ -474,6 +474,15 @@ func (u *UserHandler) ProfileJWT(ctx *gin.Context) {
 //	ctx.JSON(http.StatusOK, mess)
 //}
 
+func (c *UserHandler) Profile(ctx *gin.Context) {
+	//ctx.String(http.StatusOK, "这是你的profile")
+	//userIdStr := ctx.Query("id")
+	//
+	//if userIdStr == "" {
+	//	ctx.JSON(http.StatusBadRequest, gin.H{"error": "Id不能为空"}) {
+
+}
+
 type UserClaims struct {
 	jwt.RegisteredClaims
 	//声明要放进token里面的数据
