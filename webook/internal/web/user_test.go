@@ -5,6 +5,7 @@ import (
 	"basic-go/webook/internal/service"
 	svcmocks "basic-go/webook/internal/service/mocks"
 	"bytes"
+	"context"
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -80,7 +81,7 @@ func TestUserHandler_Signup(t *testing.T) {
 			},
 			reqBody: `
 {
-"email":"123hjx@qq.com",
+"email":"123cgy@qq.com",
 "password":"hello@world123",
 }
 `,
@@ -220,21 +221,21 @@ func TestUserHandler_Signup(t *testing.T) {
 	}
 }
 
-//func TestMock(t * testing.T){
-//	ctrl := gomock.NewController(t)
-//	defer ctrl.Finish()
-//
-//	usersvc := svcmocks.NewMockUserService(ctrl)
-//
-//	usersvc.EXPECT().SignUp(gomock.Any(), gomock.Any()).
-//		Return(errors.New("mock error"))
-//
-//	//usersvc.EXPECT().SignUp(gomock.Any(), domain.User{
-//	//	Email: "123@qq.com",
-//	//}).Return(errors.New("mock error"))
-//
-//	err := usersvc.SignUp(context.Background(), domain.User{
-//		Email: "1234@qq.com",
-//	})
-//	t.Log(err)
-//}
+func TestMock(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	usersvc := svcmocks.NewMockUserService(ctrl)
+
+	usersvc.EXPECT().SignUp(gomock.Any(), gomock.Any()).
+		Return(errors.New("mock error"))
+
+	//usersvc.EXPECT().SignUp(gomock.Any(), domain.User{
+	//	Email: "123@qq.com",
+	//}).Return(errors.New("mock error"))
+
+	err := usersvc.SignUp(context.Background(), domain.User{
+		Email: "1234@qq.com",
+	})
+	t.Log(err)
+}
