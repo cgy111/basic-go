@@ -5,9 +5,7 @@ import (
 	"basic-go/webook/internal/service"
 	svcmocks "basic-go/webook/internal/service/mocks"
 	"bytes"
-	"context"
 	"errors"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -72,14 +70,11 @@ func TestUserHandler_Signup(t *testing.T) {
 			wantCode: http.StatusOK,
 			wantBody: "注册成功",
 		},
+
 		{
 			name: "参数不对，bind失败",
 			mock: func(ctrl *gomock.Controller) service.UserService {
 				usersvc := svcmocks.NewMockUserService(ctrl)
-				usersvc.EXPECT().SignUp(gomock.Any(), domain.User{
-					Email:    "123hjx@qq.com",
-					Password: "hello@world123",
-				}).Return(nil)
 				//注册成功return nil
 				return usersvc
 			},
@@ -90,6 +85,104 @@ func TestUserHandler_Signup(t *testing.T) {
 }
 `,
 			wantCode: http.StatusBadRequest,
+		},
+
+		{
+			name: "邮箱格式不对",
+			mock: func(ctrl *gomock.Controller) service.UserService {
+				usersvc := svcmocks.NewMockUserService(ctrl)
+				return usersvc
+			},
+
+			reqBody: `
+		{
+			"email": "123@q",
+			"password": "hello#world123",
+			"confirmPassword": "hello#world123"
+		}
+		`,
+			wantCode: http.StatusOK,
+			wantBody: "你的邮箱格式不对",
+		},
+
+		{
+			name: "两次输入密码不匹配",
+			mock: func(ctrl *gomock.Controller) service.UserService {
+				usersvc := svcmocks.NewMockUserService(ctrl)
+				//注册成功return nil
+				return usersvc
+			},
+			reqBody: `
+{
+"email":"123cgy@qq.com",
+"password":"hello@world1234",
+"ConfirmPassword":"hello@world123"
+}
+`,
+			wantCode: http.StatusOK,
+			wantBody: "两次输入的密码不一致",
+		},
+
+		{
+			name: "密码格式不对",
+			mock: func(ctrl *gomock.Controller) service.UserService {
+				usersvc := svcmocks.NewMockUserService(ctrl)
+				//注册成功return nil
+				return usersvc
+			},
+			reqBody: `
+{
+"email":"123cgy@qq.com",
+"password":"hello",
+"ConfirmPassword":"hello"
+}
+`,
+			wantCode: http.StatusOK,
+			wantBody: "密码必须大于8位，包含数字、特殊字符",
+		},
+
+		{
+			name: "邮箱冲突",
+			mock: func(ctrl *gomock.Controller) service.UserService {
+				usersvc := svcmocks.NewMockUserService(ctrl)
+				usersvc.EXPECT().SignUp(gomock.Any(), domain.User{
+					Email:    "123cgy@qq.com",
+					Password: "hello@world123",
+				}).Return(service.ErrUserDuplicate)
+				//注册成功return nil
+				return usersvc
+			},
+			reqBody: `
+{
+"email":"123cgy@qq.com",
+"password":"hello@world123",
+"ConfirmPassword":"hello@world123"
+}
+`,
+			wantCode: http.StatusOK,
+			wantBody: "邮箱冲突",
+		},
+
+		{
+			name: "系统异常",
+			mock: func(ctrl *gomock.Controller) service.UserService {
+				usersvc := svcmocks.NewMockUserService(ctrl)
+				usersvc.EXPECT().SignUp(gomock.Any(), domain.User{
+					Email:    "123cgy@qq.com",
+					Password: "hello@world123",
+				}).Return(errors.New("未知异常"))
+				//注册成功return nil
+				return usersvc
+			},
+			reqBody: `
+{
+"email":"123cgy@qq.com",
+"password":"hello@world123",
+"ConfirmPassword":"hello@world123"
+}
+`,
+			wantCode: http.StatusOK,
+			wantBody: "系统异常",
 		},
 	}
 
@@ -109,7 +202,6 @@ func TestUserHandler_Signup(t *testing.T) {
 
 			req, err := http.NewRequest(http.MethodPost,
 				"/users/signup", bytes.NewBuffer([]byte(tc.reqBody)))
-			fmt.Println(req)
 			require.NoError(t, err)
 			req.Header.Set("Content-Type", "application/json")
 			//可以继续使用req
@@ -128,21 +220,21 @@ func TestUserHandler_Signup(t *testing.T) {
 	}
 }
 
-func TestMock(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	usersvc := svcmocks.NewMockUserService(ctrl)
-
-	usersvc.EXPECT().SignUp(gomock.Any(), gomock.Any()).
-		Return(errors.New("mock error"))
-
-	//usersvc.EXPECT().SignUp(gomock.Any(), domain.User{
-	//	Email: "123@qq.com",
-	//}).Return(errors.New("mock error"))
-
-	err := usersvc.SignUp(context.Background(), domain.User{
-		Email: "1234@qq.com",
-	})
-	t.Log(err)
-}
+//func TestMock(t * testing.T){
+//	ctrl := gomock.NewController(t)
+//	defer ctrl.Finish()
+//
+//	usersvc := svcmocks.NewMockUserService(ctrl)
+//
+//	usersvc.EXPECT().SignUp(gomock.Any(), gomock.Any()).
+//		Return(errors.New("mock error"))
+//
+//	//usersvc.EXPECT().SignUp(gomock.Any(), domain.User{
+//	//	Email: "123@qq.com",
+//	//}).Return(errors.New("mock error"))
+//
+//	err := usersvc.SignUp(context.Background(), domain.User{
+//		Email: "1234@qq.com",
+//	})
+//	t.Log(err)
+//}

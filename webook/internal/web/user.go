@@ -8,6 +8,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	jwt "github.com/golang-jwt/jwt/v5"
+	"go.opentelemetry.io/otel/trace"
 	"net/http"
 	"time"
 )
@@ -71,7 +72,7 @@ func (u *UserHandler) RegisterRoutes(server *gin.Engine) {
 	ug := server.Group("/users")
 	//ug.GET("/profile", u.Profile)
 	ug.GET("/profile", u.ProfileJWT)
-	ug.POST("/signup", u.Signup)
+	ug.POST("/signup", u.SignUp)
 	//ug.POST("/login", u.Login)
 	ug.POST("/login", u.LoginJWT)
 	ug.POST("/edit", u.Edit)
@@ -186,14 +187,14 @@ func (u *UserHandler) SendLoginSmsCode(ctx *gin.Context) {
 	}
 }
 
-func (u *UserHandler) Signup(ctx *gin.Context) {
-	type SignupReq struct {
+func (u *UserHandler) SignUp(ctx *gin.Context) {
+	type SignUpReq struct {
 		Email           string `json:"email"`
 		ConfirmPassword string `json:"confirmPassword"`
 		Password        string `json:"password"`
 	}
-	var req SignupReq
-	fmt.Println("2")
+	var req SignUpReq
+	//fmt.Println("2")
 
 	//Bind方法会根据Content-Type 来解析你的数据到req里面
 	//解析错了，就会直接写会一个400的错误
@@ -209,12 +210,14 @@ func (u *UserHandler) Signup(ctx *gin.Context) {
 	}
 
 	if !ok {
-		ctx.String(http.StatusOK, "你的邮箱格式错误")
+		ctx.String(http.StatusOK, "你的邮箱格式不对")
+		return
 	}
 
 	//密码校验
 	if req.ConfirmPassword != req.Password {
 		ctx.String(http.StatusOK, "两次输入的密码不一致")
+		return
 	}
 
 	ok, err = u.passwordExp.MatchString(req.Password)
@@ -229,12 +232,13 @@ func (u *UserHandler) Signup(ctx *gin.Context) {
 		return
 	}
 
-	err = u.svc.SignUp(ctx, domain.User{
+	err = u.svc.SignUp(ctx.Request.Context(), domain.User{
 		Email:    req.Email,
 		Password: req.Password,
 	})
-
 	if err == service.ErrUserDuplicate {
+		span := trace.SpanFromContext(ctx.Request.Context())
+		span.AddEvent("邮箱冲突")
 		ctx.String(http.StatusOK, "邮箱冲突")
 		return
 	}
@@ -246,7 +250,6 @@ func (u *UserHandler) Signup(ctx *gin.Context) {
 
 	ctx.String(http.StatusOK, "注册成功")
 	//fmt.Printf("%v", req)
-
 }
 
 func (u *UserHandler) LoginJWT(ctx *gin.Context) {

@@ -13,7 +13,7 @@ func RegisterRoutes() *gin.Engine {
 
 func registerUsersRoutes(server *gin.Engine) {
 	u := &UserHandler{}
-	server.POST("/users/signup", u.Signup)
+	server.POST("/users/signup", u.SignUp)
 
 	/*
 		//REST风格
