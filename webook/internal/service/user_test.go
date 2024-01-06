@@ -5,6 +5,7 @@ import (
 	"basic-go/webook/internal/repository"
 	repomocks "basic-go/webook/internal/repository/mocks"
 	"context"
+	"errors"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 	"golang.org/x/crypto/bcrypt"
@@ -49,6 +50,56 @@ func Test_userService_Login(t *testing.T) {
 				Ctime:    now,
 			},
 			wantErr: nil,
+		},
+
+		{
+			name: "用户不存在", //用户名和密码对得上
+			mock: func(ctrl *gomock.Controller) repository.UserRepository {
+				repo := repomocks.NewMockUserRepository(ctrl)
+				repo.EXPECT().FindByEmail(gomock.Any(), "123cgy@qq.com").
+					Return(domain.User{}, repository.ErrUserNotFound)
+				return repo
+			},
+			email:    "123cgy@qq.com",
+			password: "hello#world123",
+
+			wantUser: domain.User{},
+			wantErr:  ErrInvalidUserOrPassword,
+		},
+
+		{
+			name: "DB错误", //用户名和密码对得上
+			mock: func(ctrl *gomock.Controller) repository.UserRepository {
+				repo := repomocks.NewMockUserRepository(ctrl)
+				repo.EXPECT().FindByEmail(gomock.Any(), "123cgy@qq.com").
+					Return(domain.User{}, errors.New("mock db error"))
+				return repo
+			},
+			email:    "123cgy@qq.com",
+			password: "hello#world123",
+
+			wantUser: domain.User{},
+			wantErr:  errors.New("mock db error"),
+		},
+
+		{
+			name: "密码不对", //用户名和密码对得上
+			mock: func(ctrl *gomock.Controller) repository.UserRepository {
+				repo := repomocks.NewMockUserRepository(ctrl)
+				repo.EXPECT().FindByEmail(gomock.Any(), "123cgy@qq.com").
+					Return(domain.User{
+						Email:    "123cgy@qq.com",
+						Password: "$2a$10$ibW0Y0c5.YqZ.QaNIiZIieJxL8BDHAFriETJyVDTd.xf3SYBWba8e",
+						Phone:    "12345678901",
+						Ctime:    now,
+					}, nil)
+				return repo
+			},
+			email:    "123cgy@qq.com",
+			password: "111hello#world123",
+
+			wantUser: domain.User{},
+			wantErr:  ErrInvalidUserOrPassword,
 		},
 	}
 	for _, tc := range testCase {

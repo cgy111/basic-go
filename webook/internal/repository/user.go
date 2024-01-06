@@ -67,13 +67,20 @@ func (r *CachedUserRepository) FindById(ctx context.Context, id int64) (domain.U
 	}
 
 	u = r.entityToDomain(ue)
-	go func() {
+
+	_ = r.cache.Set(ctx, u)
+	/*if err != nil {
+		//这里要不要返回err
+		//打日志，做监控
+	}
+	*/
+	/*go func() {
 		err = r.cache.Set(ctx, u)
 		if err != nil {
 			//这里要不要返回err
 			//打日志，做监控
 		}
-	}()
+	}()*/
 	return u, nil
 	//err=io.EOF 要不要去数据库里面找？选加载，万一Redis真的崩掉了，你要保护住你的系统，
 	//面试：选加载，数据库限流保护
