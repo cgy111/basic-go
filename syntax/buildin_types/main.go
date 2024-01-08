@@ -2,8 +2,8 @@ package main
 
 func main() {
 	//Array()
-	//Slice()
+	Slice()
 	//SubSlice()
 	//ShareSlice()
-	Map()
+	//Map()
 }

@@ -8,6 +8,7 @@ import (
 	daomocks "basic-go/webook/internal/repository/dao/mocks"
 	"context"
 	"database/sql"
+	"errors"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 	"testing"
@@ -15,6 +16,7 @@ import (
 )
 
 func TestCachedUserRepository_FindById(t *testing.T) {
+	//你要去掉毫秒以外的部分
 	now := time.Now()
 	now = time.UnixMilli(now.UnixMilli())
 	testCases := []struct {
@@ -72,6 +74,52 @@ func TestCachedUserRepository_FindById(t *testing.T) {
 			},
 			wantErr: nil,
 		},
+
+		{
+			name: "缓存命中",
+			mock: func(ctrl *gomock.Controller) (dao.UserDAO, cache.UserCache) {
+				//缓存未命中，查了缓存，但是没结果
+				c := cachemocks.NewMockUserCache(ctrl)
+				c.EXPECT().Get(gomock.Any(), int64(123)).
+					Return(domain.User{
+						Id:       123,
+						Email:    "123@qq.com",
+						Password: "123",
+						Phone:    "12345678901",
+						Ctime:    now,
+					}, nil)
+				d := daomocks.NewMockUserDAO(ctrl)
+				return d, c
+			},
+			ctx: context.Background(),
+			id:  123,
+			wantUser: domain.User{
+				Id:       123,
+				Email:    "123@qq.com",
+				Password: "123",
+				Phone:    "12345678901",
+				Ctime:    now,
+			},
+			wantErr: nil,
+		},
+
+		{
+			name: "数据库查询失败",
+			mock: func(ctrl *gomock.Controller) (dao.UserDAO, cache.UserCache) {
+				//缓存未命中，查了缓存，但是没结果
+				c := cachemocks.NewMockUserCache(ctrl)
+				c.EXPECT().Get(gomock.Any(), int64(123)).
+					Return(domain.User{}, cache.ErrNotExist)
+				d := daomocks.NewMockUserDAO(ctrl)
+				d.EXPECT().FindById(gomock.Any(), int64(123)).
+					Return(dao.User{}, errors.New("mock db 错误"))
+				return d, c
+			},
+			ctx:      context.Background(),
+			id:       123,
+			wantUser: domain.User{},
+			wantErr:  errors.New("mock db 错误"),
+		},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -82,6 +130,7 @@ func TestCachedUserRepository_FindById(t *testing.T) {
 			u, err := repo.FindById(tc.ctx, tc.id)
 			assert.Equal(t, tc.wantErr, err)
 			assert.Equal(t, tc.wantUser, u)
+			time.Sleep(time.Second)
 		})
 	}
 }

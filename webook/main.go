@@ -17,6 +17,7 @@ func main() {
 	//	ctx.String(http.StatusOK, "你好，欢迎你")
 	//})
 	server := InitWebServer()
+
 	server.Run(":8080")
 
 }
