@@ -1,4 +1,4 @@
-package main
+package ioc
 
 import (
 	"basic-go/webook/internal/service/sms"
