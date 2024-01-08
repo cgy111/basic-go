@@ -113,7 +113,70 @@ func TestUserHandler_e2e_SendLoginSmsCode(t *testing.T) {
 				Msg:  "系统错误",
 			},
 		},
+
+		{
+			name: "输入有误",
+			before: func(t *testing.T) {
+				//这个手机号，已经有一个验证码了
+				ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+				_, err := rdb.Set(ctx, "phone_code:login:13800138000", "123456",
+					9*time.Minute+30*time.Second).Result()
+				cancel()
+				require.NoError(t, err)
+			},
+			after: func(t *testing.T) {
+				ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+				//清理数据
+				val, err := rdb.GetDel(ctx, "phone_code:login:13800138000").Result()
+				cancel()
+				assert.NoError(t, err)
+				//验证码是6位,没有被覆盖,还是123456
+				assert.Equal(t, "123456", val)
+			},
+			reqBody: `
+{
+    "phone": ""
+}
+`,
+			wantCode: 200,
+			wantBody: web.Result{
+				Code: 4,
+				Msg:  "输入有误",
+			},
+		},
+
+		{
+			name: "数据格式有误",
+			before: func(t *testing.T) {
+				//这个手机号，已经有一个验证码了
+				ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+				_, err := rdb.Set(ctx, "phone_code:login:13800138000", "123456",
+					9*time.Minute+30*time.Second).Result()
+				cancel()
+				require.NoError(t, err)
+			},
+			after: func(t *testing.T) {
+				ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+				//清理数据
+				val, err := rdb.GetDel(ctx, "phone_code:login:13800138000").Result()
+				cancel()
+				assert.NoError(t, err)
+				//验证码是6位,没有被覆盖,还是123456
+				assert.Equal(t, "123456", val)
+			},
+			reqBody: `
+{
+    "phone": "",
+}
+`,
+			wantCode: 400,
+			//wantBody: web.Result{
+			//	Code: 4,
+			//	Msg:  "输入有误",
+			//},
+		},
 	}
+
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			tc.before(t)
@@ -132,6 +195,9 @@ func TestUserHandler_e2e_SendLoginSmsCode(t *testing.T) {
 			server.ServeHTTP(resp, req)
 
 			assert.Equal(t, tc.wantCode, resp.Code)
+			if resp.Code != 200 {
+				return
+			}
 			var webRes web.Result
 			err = json.NewDecoder(resp.Body).Decode(&webRes)
 			require.NoError(t, err) //预期不会出错
