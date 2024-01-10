@@ -8,4 +8,6 @@ import (
 func InitSmsService() sms.Service {
 	//可以随时替换
 	return memory.NewService()
+	//svc := memory.NewService()
+	//return ratelimit.NewRatelimitSMSService(svc,)
 }

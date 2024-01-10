@@ -47,7 +47,7 @@ package tencent
 //	zap.ReplaceGlobals(logger)
 //	for _, tc := range testCases {
 //		t.Run(tc.name, func(t *testing.T) {
-//			er := s.SendTencent(context.Background(), tc.tplId, tc.params, tc.numbers...)
+//			er := s.Send(context.Background(), tc.tplId, tc.params, tc.numbers...)
 //			assert.Equal(t, tc.wantErr, er)
 //		})
 //	}

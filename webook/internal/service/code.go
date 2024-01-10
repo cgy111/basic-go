@@ -50,7 +50,7 @@ func (svc *codeService) Send(ctx context.Context,
 		return err
 	}
 	//发送出去
-	err = svc.smsSvc.SendTencent(ctx, codeTplId, []string{code}, phone)
+	err = svc.smsSvc.Send(ctx, codeTplId, []string{code}, phone)
 	return err
 }
 

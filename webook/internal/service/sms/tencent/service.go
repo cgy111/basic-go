@@ -26,7 +26,7 @@ func NewService(appId, signName string,
 	}
 }
 
-func (s *Service) SendTencent(ctx context.Context, tpl string, args []string, numbers ...string) error {
+func (s *Service) Send(ctx context.Context, tpl string, args []string, numbers ...string) error {
 
 	req := sms.NewSendSmsRequest()
 	req.SmsSdkAppId = s.appId

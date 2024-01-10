@@ -20,7 +20,7 @@ func NewRatelimitSMSServiceV1(svc sms.Service, limiter ratelimit.Limiter) sms.Se
 	}
 }
 
-func (s *RatelimitSMSServiceV1) SendTencent(ctx context.Context, tpl string, args []string, numbers ...string) error {
+func (s *RatelimitSMSServiceV1) Send(ctx context.Context, tpl string, args []string, numbers ...string) error {
 	limited, err := s.limiter.Limit(ctx, "sms:tencent")
 	if err != nil {
 		//系统错误
@@ -33,7 +33,7 @@ func (s *RatelimitSMSServiceV1) SendTencent(ctx context.Context, tpl string, arg
 		return errLimited
 	}
 	//在这里加一些代码
-	err = s.Service.SendTencent(ctx, tpl, args, numbers...)
+	err = s.Service.Send(ctx, tpl, args, numbers...)
 	//在这里也可以加一些代码，新特性
 	return err
 }
