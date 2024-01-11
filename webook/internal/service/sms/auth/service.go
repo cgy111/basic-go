@@ -16,7 +16,6 @@ type SMSService struct {
 func (s *SMSService) Send(ctx context.Context, biz string, args []string, numbers ...string) error {
 
 	var tc Claims
-
 	//权限校验
 	//如果这里能解析成功，说明是对应业务方
 	//没有error就说明，token是我发的
