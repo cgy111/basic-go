@@ -12,6 +12,10 @@ type SMSService struct {
 	key string
 }
 
+//func (s *SMSService) GenerateToken(ctx context.Context, tplId string) (string, error) {
+//
+//}
+
 // Send 发送，其中biz必须是线下申请的一个业务方的token
 func (s *SMSService) Send(ctx context.Context, biz string, args []string, numbers ...string) error {
 
