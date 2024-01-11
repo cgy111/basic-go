@@ -5,7 +5,6 @@ import (
 	"basic-go/webook/internal/web/middleware"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
 	"strings"
 	"time"
 )
@@ -18,7 +17,8 @@ func InitGin(mdls []gin.HandlerFunc, hdl *web.UserHandler) *gin.Engine {
 	return server
 }
 
-func InitMiddlewares(redisClient redis.Cmdable) []gin.HandlerFunc {
+// redisClient redis.Cmdable
+func InitMiddlewares() []gin.HandlerFunc {
 	return []gin.HandlerFunc{
 		// 跨域处理
 		corsHdl(),
