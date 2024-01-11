@@ -13,6 +13,7 @@ import (
 	"basic-go/webook/internal/service"
 	"basic-go/webook/internal/web"
 	"basic-go/webook/ioc"
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -23,7 +24,9 @@ import (
 // Injectors from wire.go:
 
 func InitWebServer() *gin.Engine {
+	fmt.Println("111")
 	cmdable := ioc.InitRedis()
+	fmt.Println("111")
 	v := ioc.InitMiddlewares()
 	db := ioc.InitDB()
 	userDAO := dao.NewUserDAO(db)

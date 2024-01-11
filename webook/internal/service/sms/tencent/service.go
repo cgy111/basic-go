@@ -26,6 +26,9 @@ func NewService(appId, signName string,
 	}
 }
 
+// Send一个是[]*string
+// 一个是string, json串
+// biz 直接代表的就是tplId
 func (s *Service) Send(ctx context.Context, biz string, args []string, numbers ...string) error {
 
 	req := sms.NewSendSmsRequest()
