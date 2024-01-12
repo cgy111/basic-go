@@ -38,4 +38,4 @@ func (s Service) Send(ctx context.Context, tpl string, args []string, numbers ..
 //     2.2.1 静态 token
 //     2.2.2 动态 token
 //3. 提高可观测性：日志、metrics，tracing，丰富完善的排查手段
-//
+//4. 提高性能：高性能
