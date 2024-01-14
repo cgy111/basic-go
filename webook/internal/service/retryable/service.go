@@ -13,7 +13,7 @@ type Service struct {
 	retryMax int
 }
 
-func (s Service) Send(ctx context.Context, tpl string, args []string, numbers ...string) error {
+func (s *Service) Send(ctx context.Context, tpl string, args []string, numbers ...string) error {
 	err := s.svc.Send(ctx, tpl, args, numbers...)
 	cnt := 1
 	for err != nil && cnt < s.retryMax {
