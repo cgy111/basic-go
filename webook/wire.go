@@ -28,6 +28,7 @@ func InitWebServer() *gin.Engine {
 
 		service.NewUserService,
 		service.NewCodeService,
+		ioc.InitWechatService,
 
 		//直接基于内存的实现
 		//memory.NewService,
@@ -35,6 +36,7 @@ func InitWebServer() *gin.Engine {
 		ioc.InitSmsService,
 
 		web.NewUserHandler,
+		web.NewOAuth2WechatHandler,
 
 		//gin.Default,
 		ioc.InitGin,

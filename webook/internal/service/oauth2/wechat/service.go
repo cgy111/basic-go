@@ -17,6 +17,12 @@ type service struct {
 	appId string
 }
 
+func NewService(appId string) Service {
+	return &service{
+		appId: appId,
+	}
+}
+
 func (s *service) AuthURL(ctx context.Context) (string, error) {
 	const urlPattern = "https://open.weixin.qq.com/connect/qrconnect?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_login&state=%s#wechat_redirect"
 	state := uuid.New()

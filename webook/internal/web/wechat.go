@@ -10,8 +10,10 @@ type OAuth2WechatHandler struct {
 	svc wechat.Service
 }
 
-func NewOAuth2WechatHandler() {
-
+func NewOAuth2WechatHandler(svc wechat.Service) *OAuth2WechatHandler {
+	return &OAuth2WechatHandler{
+		svc: svc,
+	}
 }
 
 func (h *OAuth2WechatHandler) RegisterRoutes(server *gin.Engine) {
