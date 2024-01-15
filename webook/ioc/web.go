@@ -30,6 +30,7 @@ func InitMiddlewares() []gin.HandlerFunc {
 			IgnorePaths("/users/login_sms/code/send").
 			IgnorePaths("/users/login_sms").
 			IgnorePaths("/oauth2/wechat/authurl").
+			IgnorePaths("/oauth2/wechat/callback").
 			IgnorePaths("/users/login").Build(),
 
 		// 限流处理

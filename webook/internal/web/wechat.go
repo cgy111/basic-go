@@ -37,7 +37,8 @@ func (h *OAuth2WechatHandler) AuthURL(ctx *gin.Context) {
 }
 
 func (h *OAuth2WechatHandler) Callback(ctx *gin.Context) {
-
+	ctx.String(http.StatusOK, "wechat callback")
+	//验证微信的code
 }
 
 //type OAuth2Handler struct {
