@@ -164,6 +164,7 @@ func (r *CachedUserRepository) entityToDomain(u dao.User) domain.User {
 
 		// 如果要创建联合索引，<unionid, openid>，用 openid 查询的时候不会走索引
 		// <openid, unionid> 用 unionid 查询的时候，不会走索引
+
 		// 微信的字段
 
 		WechatInfo: domain.WechatInfo{
