@@ -23,6 +23,11 @@ type MockUserDAO struct {
 	recorder *MockUserDAOMockRecorder
 }
 
+func (m *MockUserDAO) FindByWechat(ctx context.Context, openId string) (dao.User, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 // MockUserDAOMockRecorder is the mock recorder for MockUserDAO.
 type MockUserDAOMockRecorder struct {
 	mock *MockUserDAO

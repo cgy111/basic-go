@@ -152,6 +152,20 @@ func (r *CachedUserRepository) entityToDomain(u dao.User) domain.User {
 		Phone:       u.Phone.String,
 		Birthday:    u.Birthday,
 		Description: u.Description,
+
+		// 索引的最左匹配原则：
+		// 假如索引在 <A, B, C> 建好了
+		// A, AB, ABC 都能用
+		// WHERE A =?
+		// WHERE A = ? AND B =?    WHERE B = ? AND A =?
+		// WHERE A = ? AND B = ? AND C = ?  ABC 的顺序随便换
+		// WHERE 里面带了 ABC，可以用
+		// WHERE 里面，没有 A，就不能用
+
+		// 如果要创建联合索引，<unionid, openid>，用 openid 查询的时候不会走索引
+		// <openid, unionid> 用 unionid 查询的时候，不会走索引
+		// 微信的字段
+
 		WechatInfo: domain.WechatInfo{
 			UnionID: u.WechatUnionID.String,
 			OpenID:  u.WechatOpenID.String,
