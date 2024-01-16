@@ -22,6 +22,7 @@ type UserRepository interface {
 	FindById(ctx context.Context, id int64) (domain.User, error)
 	Create(ctx context.Context, u domain.User) error
 	Update(ctx context.Context, u domain.User) error
+	FindByWechat(ctx context.Context, openID string) (domain.User, error)
 }
 
 type CachedUserRepository struct {
@@ -35,7 +36,13 @@ func NewUserRepository(dao dao.UserDAO, c cache.UserCache) UserRepository {
 		cache: c,
 	}
 }
-
+func (r *CachedUserRepository) FindByWechat(ctx context.Context, openID string) (domain.User, error) {
+	u, err := r.dao.FindByWechat(ctx, openID)
+	if err != nil {
+		return domain.User{}, err
+	}
+	return r.entityToDomain(u), nil
+}
 func (r *CachedUserRepository) FindByPhone(ctx context.Context, phone string) (domain.User, error) {
 	u, err := r.dao.FindByPhone(ctx, phone)
 	if err != nil {
@@ -124,7 +131,15 @@ func (r *CachedUserRepository) domainToEntity(u domain.User) dao.User {
 		},
 		Birthday:    u.Birthday,
 		Description: u.Description,
-		Ctime:       u.Ctime.UnixMilli(),
+		WechatOpenID: sql.NullString{
+			String: u.WechatInfo.OpenID,
+			Valid:  u.WechatInfo.OpenID != "",
+		},
+		WechatUnionID: sql.NullString{
+			String: u.WechatInfo.UnionID,
+			Valid:  u.WechatInfo.UnionID != "",
+		},
+		Ctime: u.Ctime.UnixMilli(),
 	}
 }
 
@@ -137,6 +152,10 @@ func (r *CachedUserRepository) entityToDomain(u dao.User) domain.User {
 		Phone:       u.Phone.String,
 		Birthday:    u.Birthday,
 		Description: u.Description,
-		Ctime:       time.UnixMilli(u.Ctime),
+		WechatInfo: domain.WechatInfo{
+			UnionID: u.WechatUnionID.String,
+			OpenID:  u.WechatOpenID.String,
+		},
+		Ctime: time.UnixMilli(u.Ctime),
 	}
 }

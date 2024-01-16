@@ -79,7 +79,10 @@ func (s *service) VerifyCode(ctx context.Context, code string, state string) (do
 	if res.ErrCode != 0 {
 		return domain.WechatInfo{}, fmt.Errorf("微信返回错误响应,错误码:%d,错误信息:%s", res.ErrCode, res.ErrMsg)
 	}
-	return domain.WechatInfo{}, nil
+	return domain.WechatInfo{
+		OpenID:  res.Openid,
+		UnionID: res.Unionid,
+	}, nil
 }
 
 func (s *service) AuthURL(ctx context.Context) (string, error) {

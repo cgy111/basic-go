@@ -7,10 +7,8 @@ import (
 	regexp "github.com/dlclark/regexp2"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	jwt "github.com/golang-jwt/jwt/v5"
 	"go.opentelemetry.io/otel/trace"
 	"net/http"
-	"time"
 )
 
 const biz = "login"
@@ -32,6 +30,8 @@ type UserHandler struct {
 	birthdayExp    *regexp.Regexp
 	descriptionExp *regexp.Regexp
 	phoneExp       *regexp.Regexp
+	//组合
+	jwtHandler
 }
 
 func NewUserHandler(svc service.UserService, codeSvc service.CodeService) *UserHandler {
@@ -288,24 +288,6 @@ func (u *UserHandler) LoginJWT(ctx *gin.Context) {
 	return
 }
 
-func (u *UserHandler) setJWTToken(ctx *gin.Context, uid int64) error {
-	claims := UserClaims{
-		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 30)),
-		},
-		Uid:       uid,
-		UserAgent: ctx.Request.UserAgent(),
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
-	tokenStr, err := token.SignedString([]byte("8b8d2e454737a253e0b12365a1ab97e2"))
-	if err != nil {
-		//ctx.String(http.StatusInternalServerError, "系统错误")
-		return err
-	}
-	ctx.Header("x-jwt-token", tokenStr)
-	return nil
-}
-
 func (u *UserHandler) Login(ctx *gin.Context) {
 	type LoginReq struct {
 		Email    string `json:"email"`
@@ -484,12 +466,4 @@ func (c *UserHandler) Profile(ctx *gin.Context) {
 	//if userIdStr == "" {
 	//	ctx.JSON(http.StatusBadRequest, gin.H{"error": "Id不能为空"}) {
 
-}
-
-type UserClaims struct {
-	jwt.RegisteredClaims
-	//声明要放进token里面的数据
-	Uid int64
-
-	UserAgent string
 }
