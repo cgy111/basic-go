@@ -13,6 +13,8 @@ func InitWechatService() wechat.Service {
 	//if !ok {
 	//	panic("没有找到环境变量 WECHAT_APP_SECRET")
 	//}
+
 	appId := "123456"
-	return wechat.NewService(appId)
+	appKey := "123456"
+	return wechat.NewService(appId, appKey)
 }
