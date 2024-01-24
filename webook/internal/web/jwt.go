@@ -30,7 +30,6 @@ func (h jwtHandler) setJWTToken(ctx *gin.Context, uid int64) error {
 type UserClaims struct {
 	jwt.RegisteredClaims
 	//声明要放进token里面的数据
-	Uid int64
-
+	Uid       int64
 	UserAgent string
 }
