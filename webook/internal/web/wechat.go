@@ -13,9 +13,10 @@ type OAuth2WechatHandler struct {
 	jwtHandler
 }
 
-func NewOAuth2WechatHandler(svc wechat.Service) *OAuth2WechatHandler {
+func NewOAuth2WechatHandler(svc wechat.Service, userSvc service.UserService) *OAuth2WechatHandler {
 	return &OAuth2WechatHandler{
-		svc: svc,
+		svc:     svc,
+		userSvc: userSvc,
 	}
 }
 
