@@ -6,7 +6,7 @@ func main() {
 	/*var x = 10
 	fmt.Printf("x的地址%p\n", &x)
 
-	y := &x
+	y := &x;
 	fmt.Printf("y的地址%p\n", &y)
 
 	x = 100
