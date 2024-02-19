@@ -29,12 +29,12 @@ func (h *OAuth2WechatHandler) RegisterRoutes(server *gin.Engine) {
 func (h *OAuth2WechatHandler) AuthURL(ctx *gin.Context) {
 	url, err := h.svc.AuthURL(ctx)
 	if err != nil {
+		ctx.JSON(http.StatusOK, Result{
+			Code: 5,
+			Msg:  "构造扫码登录URL失败",
+		})
 		return
 	}
-	ctx.JSON(http.StatusOK, Result{
-		Code: 5,
-		Msg:  "构造扫码登录URL失败",
-	})
 	ctx.JSON(http.StatusOK, Result{
 		Data: url,
 	})
