@@ -87,6 +87,7 @@ func (s *service) VerifyCode(ctx context.Context, code string, state string) (do
 
 func (s *service) AuthURL(ctx context.Context) (string, error) {
 	const urlPattern = "https://open.weixin.qq.com/connect/qrconnect?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_login&state=%s#wechat_redirect"
+	// 生成用于防止CSRF攻击以及状态跟踪的唯一state值
 	state := uuid.New()
 	return fmt.Sprintf(urlPattern, s.appId, redirectURI, state), nil
 }
