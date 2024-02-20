@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	uuid "github.com/lithammer/shortuuid/v4"
 	"net/http"
 	"net/url"
 )
@@ -13,14 +12,15 @@ import (
 var redirectURI = url.PathEscape("https://sxcgy.cn/wechat/callback")
 
 type Service interface {
-	AuthURL(ctx context.Context) (string, error)
-	VerifyCode(ctx context.Context, code string, state string) (domain.WechatInfo, error)
+	AuthURL(ctx context.Context, state string) (string, error)
+	VerifyCode(ctx context.Context, code string) (domain.WechatInfo, error)
 }
 
 type service struct {
 	appId     string
 	appSecret string
 	cliect    *http.Client
+	//cmd       redis.Cmdable
 }
 
 // 不偷懒的写法
@@ -41,7 +41,7 @@ func NewService(appId string, appSecret string) Service {
 	}
 }
 
-func (s *service) VerifyCode(ctx context.Context, code string, state string) (domain.WechatInfo, error) {
+func (s *service) VerifyCode(ctx context.Context, code string) (domain.WechatInfo, error) {
 	//方法1
 	//const targetPattern = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code\n"
 	//taget := fmt.Sprintf(targetPattern, s.appId, s.appSecret, code)
@@ -79,16 +79,24 @@ func (s *service) VerifyCode(ctx context.Context, code string, state string) (do
 	if res.ErrCode != 0 {
 		return domain.WechatInfo{}, fmt.Errorf("微信返回错误响应,错误码:%d,错误信息:%s", res.ErrCode, res.ErrMsg)
 	}
+
+	//str := s.cmd.Get(ctx, "my-state").String()
+	//if str != state {
+	//
+	//}
+
 	return domain.WechatInfo{
 		OpenID:  res.Openid,
 		UnionID: res.Unionid,
 	}, nil
 }
 
-func (s *service) AuthURL(ctx context.Context) (string, error) {
+func (s *service) AuthURL(ctx context.Context, state string) (string, error) {
 	const urlPattern = "https://open.weixin.qq.com/connect/qrconnect?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_login&state=%s#wechat_redirect"
 	// 生成用于防止CSRF攻击以及状态跟踪的唯一state值
-	state := uuid.New()
+	//state := uuid.New()
+	//如果在这里存，state，加入存Redis
+	//s.cmd.Set(ctx, "my-state", state, time.Minute)
 	return fmt.Sprintf(urlPattern, s.appId, redirectURI, state), nil
 }
 
