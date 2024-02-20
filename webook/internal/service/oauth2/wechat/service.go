@@ -9,7 +9,7 @@ import (
 	"net/url"
 )
 
-var redirectURI = url.PathEscape("https://sxcgy.cn/wechat/callback")
+var redirectURI = url.PathEscape("https://sxcgy.cn/oauth2/wechat/callback")
 
 type Service interface {
 	AuthURL(ctx context.Context, state string) (string, error)
