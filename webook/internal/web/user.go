@@ -3,6 +3,7 @@ package web
 import (
 	"basic-go/webook/internal/domain"
 	"basic-go/webook/internal/service"
+	"fmt"
 	regexp "github.com/dlclark/regexp2"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -82,7 +83,16 @@ func (u *UserHandler) RegisterRoutes(server *gin.Engine) {
 	ug.POST("/refresh_token", u.RefreshToken)
 }
 
+// RefreshToken 可以同时刷新长短 token,用redis 来记录是否有效,既refresh_token 是一次性的
+// 参考登录校验部分,比较 User-Agent 来增强安全性
 func (u *UserHandler) RefreshToken(ctx *gin.Context) {
+	cnt, err := u.cmd.Exists(ctx, fmt.Sprintf("users:ssid:%s", claims.Ssid)).Result()
+	if err != nil || cnt > 0 {
+		//要么redis有问题，要么已经退出登录
+		ctx.AbortWithStatus(http.StatusUnauthorized)
+		return
+	}
+
 	//只有这个接口,拿出来的才是refresh token,其他地方都是access token
 	refreshToken := ExtractToken(ctx)
 	var rc RefreshClaims
@@ -94,7 +104,7 @@ func (u *UserHandler) RefreshToken(ctx *gin.Context) {
 		return
 	}
 	//搞个新的access token
-	u.setJWTToken(ctx, rc.Uid)
+	u.setJWTToken(ctx, rc.Uid, rc.Ssid)
 	if err != nil {
 		ctx.AbortWithStatus(http.StatusUnauthorized)
 		return
@@ -140,15 +150,7 @@ func (u *UserHandler) LoginSMS(ctx *gin.Context) {
 	}
 
 	//id从哪里来？
-	if err := u.setJWTToken(ctx, user.Id); err != nil {
-		//记录日志
-		ctx.JSON(http.StatusOK, Result{
-			Code: 5,
-			Msg:  "系统错误",
-		})
-		return
-	}
-	if err := u.setRefreshJWTToken(ctx, user.Id); err != nil {
+	if err := u.setLoginToken(ctx, user.Id); err != nil {
 		//记录日志
 		ctx.JSON(http.StatusOK, Result{
 			Code: 5,
@@ -309,13 +311,7 @@ func (u *UserHandler) LoginJWT(ctx *gin.Context) {
 	//步骤2
 	//在这里用JWT设置登录态
 	//生成一个JWT token
-	err = u.setJWTToken(ctx, user.Id)
-	if err != nil {
-		ctx.String(http.StatusOK, "系统错误")
-		return
-	}
-
-	err = u.setRefreshJWTToken(ctx, user.Id)
+	err = u.setLoginToken(ctx, user.Id)
 	if err != nil {
 		ctx.String(http.StatusOK, "系统错误")
 		return

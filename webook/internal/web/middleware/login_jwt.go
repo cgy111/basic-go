@@ -3,8 +3,10 @@ package middleware
 import (
 	"basic-go/webook/internal/web"
 	"encoding/gob"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/redis/go-redis/v9"
 	"net/http"
 	"time"
 )
@@ -12,6 +14,7 @@ import (
 // JWT登录校验
 type LoginJWTMiddlewareBuilder struct {
 	paths []string
+	cmd   redis.Cmdable
 }
 
 func NewLoginJWTMiddlewareBuilder() *LoginJWTMiddlewareBuilder {
@@ -58,6 +61,13 @@ func (l *LoginJWTMiddlewareBuilder) Build() gin.HandlerFunc {
 		if claims.UserAgent != ctx.Request.UserAgent() {
 			//严重的安全问题
 			//理论上需要加监控
+			ctx.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
+
+		cnt, err := l.cmd.Exists(ctx, fmt.Sprintf("users:ssid:%s", claims.Ssid)).Result()
+		if err != nil || cnt > 0 {
+			//要么redis有问题，要么已经退出登录
 			ctx.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
