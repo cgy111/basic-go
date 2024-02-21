@@ -44,7 +44,7 @@ func corsHdl() gin.HandlerFunc {
 		AllowMethods: []string{"POST", "GET"},
 		AllowHeaders: []string{"Content-Type", "Authorization"},
 		//不加，前端拿不到
-		ExposeHeaders: []string{"x-jwt-token"},
+		ExposeHeaders: []string{"x-jwt-token", "x-refresh-token"},
 		//是否允许你带cookie之类的东西
 		AllowCredentials: true,
 		AllowOriginFunc: func(origin string) bool {

@@ -3,7 +3,6 @@ package web
 import (
 	"basic-go/webook/internal/domain"
 	"basic-go/webook/internal/service"
-	"fmt"
 	regexp "github.com/dlclark/regexp2"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -117,7 +116,15 @@ func (u *UserHandler) LoginSMS(ctx *gin.Context) {
 
 	//id从哪里来？
 	if err := u.setJWTToken(ctx, user.Id); err != nil {
-		fmt.Println("jwttoken")
+		//记录日志
+		ctx.JSON(http.StatusOK, Result{
+			Code: 5,
+			Msg:  "系统错误",
+		})
+		return
+	}
+	if err := u.setRefreshJWTToken(ctx, user.Id); err != nil {
+		//记录日志
 		ctx.JSON(http.StatusOK, Result{
 			Code: 5,
 			Msg:  "系统错误",
@@ -282,8 +289,13 @@ func (u *UserHandler) LoginJWT(ctx *gin.Context) {
 		ctx.String(http.StatusOK, "系统错误")
 		return
 	}
-	//fmt.Println(tokenStr)
-	fmt.Println(user)
+
+	err = u.setRefreshJWTToken(ctx, user.Id)
+	if err != nil {
+		ctx.String(http.StatusOK, "系统错误")
+		return
+	}
+
 	ctx.String(http.StatusOK, "登录成功")
 	return
 }
