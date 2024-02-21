@@ -27,6 +27,7 @@ func InitMiddlewares() []gin.HandlerFunc {
 		// 登录验证
 		middleware.NewLoginJWTMiddlewareBuilder().
 			IgnorePaths("/users/signup").
+			IgnorePaths("/users/refresh_token").
 			IgnorePaths("/users/login_sms/code/send").
 			IgnorePaths("/users/login_sms").
 			IgnorePaths("/oauth2/wechat/authurl").

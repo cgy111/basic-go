@@ -3,6 +3,8 @@ package web
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"net/http"
+	"strings"
 	"time"
 )
 
@@ -53,6 +55,19 @@ func (h jwtHandler) setRefreshJWTToken(ctx *gin.Context, uid int64) error {
 	}
 	ctx.Header("x-refresh-token", tokenStr)
 	return nil
+}
+
+func ExtractToken(ctx *gin.Context) string {
+	//现在用JWT来校验
+	tokenHeader := ctx.GetHeader("Authorization")
+	//segs := strings.SplitN(tokenHeader, " ", 2)
+	segs := strings.Split(tokenHeader, " ")
+	if len(segs) != 2 {
+		//	没登录，有人瞎搞
+		ctx.AbortWithStatus(http.StatusUnauthorized)
+		return ""
+	}
+	return segs[1]
 }
 
 type RefreshClaims struct {

@@ -6,6 +6,7 @@ import (
 	regexp "github.com/dlclark/regexp2"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	"go.opentelemetry.io/otel/trace"
 	"net/http"
 )
@@ -57,6 +58,7 @@ func NewUserHandler(svc service.UserService, codeSvc service.CodeService) *UserH
 		birthdayExp:    birthdayExp,
 		descriptionExp: userProfilEpx,
 		phoneExp:       phoneExp,
+		jwtHandler:     newJwtHandler(),
 	}
 }
 
@@ -77,6 +79,29 @@ func (u *UserHandler) RegisterRoutes(server *gin.Engine) {
 	ug.POST("/edit", u.Edit)
 	ug.POST("/login_sms/code/send", u.SendLoginSmsCode)
 	ug.POST("/login_sms", u.LoginSMS)
+	ug.POST("/refresh_token", u.RefreshToken)
+}
+
+func (u *UserHandler) RefreshToken(ctx *gin.Context) {
+	//只有这个接口,拿出来的才是refresh token,其他地方都是access token
+	refreshToken := ExtractToken(ctx)
+	var rc RefreshClaims
+	token, err := jwt.ParseWithClaims(refreshToken, &rc, func(token *jwt.Token) (interface{}, error) {
+		return u.rtKey, nil
+	})
+	if err != nil || !token.Valid {
+		ctx.AbortWithStatus(http.StatusUnauthorized)
+		return
+	}
+	//搞个新的access token
+	u.setJWTToken(ctx, rc.Uid)
+	if err != nil {
+		ctx.AbortWithStatus(http.StatusUnauthorized)
+		return
+	}
+	ctx.JSON(http.StatusOK, Result{
+		Msg: "刷新成功",
+	})
 }
 
 func (u *UserHandler) LoginSMS(ctx *gin.Context) {

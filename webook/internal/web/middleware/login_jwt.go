@@ -5,9 +5,7 @@ import (
 	"encoding/gob"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
-	"log"
 	"net/http"
-	"strings"
 	"time"
 )
 
@@ -35,20 +33,7 @@ func (l *LoginJWTMiddlewareBuilder) Build() gin.HandlerFunc {
 			}
 		}
 		//现在用JWT来校验
-		tokenHeader := ctx.GetHeader("Authorization")
-		if tokenHeader == "" {
-			//	没有登录
-			ctx.AbortWithStatus(http.StatusUnauthorized)
-			return
-		}
-		segs := strings.SplitN(tokenHeader, " ", 2)
-		if len(segs) != 2 {
-			//	没登录，有人瞎搞
-			ctx.AbortWithStatus(http.StatusUnauthorized)
-			return
-		}
-
-		tokenStr := segs[1]
+		tokenStr := web.ExtractToken(ctx)
 		claims := &web.UserClaims{}
 		//ParseWithClaims里面，一定要传入指针
 		token, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
@@ -77,17 +62,17 @@ func (l *LoginJWTMiddlewareBuilder) Build() gin.HandlerFunc {
 			return
 		}
 
-		//每十秒刷新一次
-		now := time.Now()
-		if claims.ExpiresAt.Sub(now) < time.Second*50 {
-			//每十秒刷新一次
-			claims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(time.Minute))
-			tokenStr, err = token.SignedString([]byte("8b8d2e454737a253e0b12365a1ab97e2"))
-			if err != nil {
-				log.Print("jwt 续约失败", err)
-			}
-			ctx.Header("x-jwt-token", tokenStr)
-		}
+		////每十秒刷新一次
+		//now := time.Now()
+		//if claims.ExpiresAt.Sub(now) < time.Second*50 {
+		//	//每十秒刷新一次
+		//	claims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(time.Minute))
+		//	tokenStr, err = token.SignedString([]byte("8b8d2e454737a253e0b12365a1ab97e2"))
+		//	if err != nil {
+		//		log.Print("jwt 续约失败", err)
+		//	}
+		//	ctx.Header("x-jwt-token", tokenStr)
+		//}
 
 		ctx.Set("claims", claims)
 		//ctx.Set("userId",claims.Uid)
