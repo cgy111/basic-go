@@ -2,6 +2,7 @@ package ioc
 
 import (
 	"basic-go/webook/internal/web"
+	ijwt "basic-go/webook/internal/web/jwt"
 	"basic-go/webook/internal/web/middleware"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -19,13 +20,13 @@ func InitGin(mdls []gin.HandlerFunc, hdl *web.UserHandler,
 }
 
 // redisClient redis.Cmdable
-func InitMiddlewares() []gin.HandlerFunc {
+func InitMiddlewares(jwtHdal ijwt.Handler) []gin.HandlerFunc {
 	return []gin.HandlerFunc{
 		// 跨域处理
 		corsHdl(),
 
 		// 登录验证
-		middleware.NewLoginJWTMiddlewareBuilder().
+		middleware.NewLoginJWTMiddlewareBuilder(jwtHdal).
 			IgnorePaths("/users/signup").
 			IgnorePaths("/users/refresh_token").
 			IgnorePaths("/users/login_sms/code/send").
