@@ -54,7 +54,7 @@ func corsHdl() gin.HandlerFunc {
 				//开发环境
 				return true
 			}
-			return strings.Contains(origin, "qiniu.io")
+			return strings.Contains(origin, "sxcgy.cn")
 		},
 		MaxAge: 12 * time.Hour,
 	})
