@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	_ "github.com/gin-contrib/sessions/redis"
+	"github.com/spf13/viper"
 )
 
 func main() {
@@ -16,10 +18,63 @@ func main() {
 	//server.GET("/hello", func(ctx *gin.Context) {
 	//	ctx.String(http.StatusOK, "你好，欢迎你")
 	//})
+	//initViperV1()
+	initViperReader()
 	server := InitWebServer()
 
 	server.Run(":8080")
 
+}
+
+// 开发环境及联调环境
+func initViperReader() {
+	viper.SetConfigType("yaml")
+
+	cfg := `
+db.mysql:
+  dsn:  "root:root@tcp(47.123.5.217:13316)/webook"
+
+redis:
+  addr: "47.123.5.217:6379"
+`
+
+	err := viper.ReadConfig(bytes.NewReader([]byte(cfg)))
+	if err != nil {
+		panic(err)
+	}
+}
+
+func initViperV1() {
+	//viper.SetDefault("db.mysql.dsn",
+	//	"root:root@tcp(47.123.5.217:13316)/mysql")
+	viper.SetConfigFile("config/dev.yaml")
+	err := viper.ReadInConfig()
+	if err != nil {
+		panic(err)
+	}
+}
+
+func initViper() {
+	//配置文件的名字，但是不包含文件扩展名
+	//不包含 .go , .yaml 之类的后缀
+	viper.SetConfigName("dev")
+	//告诉viper配置文件是yaml格式
+	//现实中，用很多格式，json,yaml,toml,xml，init
+	viper.SetConfigType("yaml")
+	//当前工作目录下的 config 子目录
+	viper.AddConfigPath("./config")
+	//viper.AddConfigPath("/tmp/config")
+	//viper.AddConfigPath("/ect/webook")
+	//读取配置到 viper 里面,或者可以理解为加载到内存里面
+	err := viper.ReadInConfig()
+	if err != nil {
+		panic(err)
+	}
+
+	//otherViper := viper.New()
+	//otherViper.SetConfigName("myjson")
+	//otherViper.AddConfigPath("./config")
+	//otherViper.SetConfigType("json")
 }
 
 /*func initWebServer() *gin.Engine {
