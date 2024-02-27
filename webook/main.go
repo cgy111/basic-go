@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	_ "github.com/gin-contrib/sessions/redis"
+	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
 
@@ -19,11 +20,18 @@ func main() {
 	//	ctx.String(http.StatusOK, "你好，欢迎你")
 	//})
 	//initViperV1()
-	initViperReader()
+	initViperV2()
+	//initViperReader()
 	server := InitWebServer()
 
 	server.Run(":8080")
 
+}
+
+func initViperV2() {
+	cfile := pflag.String("config", "config/dev.yaml", "指定配置文件路径")
+	pflag.Parse()
+	viper.SetConfigFile(*cfile)
 }
 
 // 开发环境及联调环境

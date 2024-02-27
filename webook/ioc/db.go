@@ -17,7 +17,7 @@ func InitDB() *gorm.DB {
 	//var cfg Config
 
 	var cfg Config = Config{
-		DSN: "root:root@tcp(47.123.5.217:13316)/mysql2",
+		DSN: "root:root@tcp(47.123.5.217:13316)/webook",
 	}
 
 	err := viper.UnmarshalKey("db.mysql", &cfg)
